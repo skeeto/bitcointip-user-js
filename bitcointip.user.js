@@ -114,4 +114,5 @@ getComment($('a.id-t2_7vw3n')).each(function() {
  *  http://www.reddit.com/r/bitcointip/comments/13iykn/b/c7dj8ia
  *  http://www.reddit.com/r/bitcointip/comments/132nhq/t/c7c7iue
  *  http://www.reddit.com/r/Bitcoin/comments/14i9e7/y/c7dc6w9
+ *  http://www.reddit.com/r/Bitcoin/comments/14qysn/
  */
