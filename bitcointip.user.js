@@ -50,12 +50,17 @@ function getChildren(element) {
     return getComment(element).find('.comment');
 }
 
+/* Return true if the element's comment is the target of the URL. */
+function isTarget(element) {
+    return getComment(element).find('form').first().hasClass('border');
+}
+
 /* Hide verification posts. Note: t2_7vw3n is /u/bitcointip. */
 getComment($('a.id-t2_7vw3n')).each(function() {
     var $this = $(this);
 
     /* Hide bitcointip's reply. */
-    if (getChildren($this).length === 0) {
+    if (getChildren($this).length === 0 && !isTarget($this)) {
         var expand = $this.find('.expand').first();
         reddit.hidecomment(expand);
     }
