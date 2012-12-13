@@ -59,7 +59,7 @@ function isTarget(element) {
 getComment($('a.id-t2_7vw3n')).each(function() {
     var $this = $(this);
 
-    /* Hide bitcointip's reply. */
+    /* Hide bitcointip's reply (maybe). */
     if (getChildren($this).length === 0 && !isTarget($this)) {
         var expand = $this.find('.expand').first();
         reddit.hidecomment(expand);
@@ -76,8 +76,7 @@ getComment($('a.id-t2_7vw3n')).each(function() {
     });
 
     /* Mark the tip. */
-    var tipbody = getBody(getComment($this).parent());
-    tipbody.children().each(function() {
+    getBody($this.parent()).children().each(function() {
         var $this = $(this);
         if (tipregex.test($this.text())) {
             var icon = $('<img/>').attr({
