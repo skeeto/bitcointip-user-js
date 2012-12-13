@@ -35,17 +35,34 @@ $('.tip-bitcoins').bind('click', function(event) {
     return false;
 });
 
+/* Get the top div container for the comment containing the element. */
+function getComment(element) {
+    return element.closest('.comment');
+}
+
+/* Get the comment's content body. */
+function getBody(element) {
+    return getComment(element).find('.md').first();
+}
+
+/* Get the children comments of this comment. */
+function getChildren(element) {
+    return getComment(element).find('.comment');
+}
+
 /* Hide verification posts. Note: t2_7vw3n is /u/bitcointip. */
-$('a.id-t2_7vw3n').closest('.comment').each(function() {
+getComment($('a.id-t2_7vw3n')).each(function() {
     var $this = $(this);
 
     /* Hide bitcointip's reply. */
-    var expand = $this.find('.expand').first();
-    reddit.hidecomment(expand);
+    if (getChildren($this).length === 0) {
+        var expand = $this.find('.expand').first();
+        reddit.hidecomment(expand);
+    }
 
     /* Determine status. */
     var status = "Rejected", amount = '';
-    $this.find('.md').first().children().each(function() {
+    getBody($this).children().each(function() {
         var $this = $(this);
         if (/Verified/.test($this.text())) {
             status = "Verified";
@@ -54,7 +71,7 @@ $('a.id-t2_7vw3n').closest('.comment').each(function() {
     });
 
     /* Mark the tip. */
-    var tipbody = $this.parent().closest('.comment').find('.md').first();
+    var tipbody = getBody(getComment($this).parent());
     tipbody.children().each(function() {
         var $this = $(this);
         if (tipregex.test($this.text())) {
