@@ -1,10 +1,26 @@
 // ==UserScript==
 // @name         Bitcoin Tip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
-// @version      1.1.3
+// @version      1.1.4
 // @license      Public Domain
 // @include      http://*.reddit.com/r/*
 // ==/UserScript==
+
+/* Changelog:
+ * 1.1.4
+ *    Don't hide verification when it has children
+ *    Don't hide verification when it's the URL target
+ * 1.1.3
+ *    Fix case insensitivity in regex
+ * 1.1.2
+ *    Display tipping amount
+ * 1.1.1
+ *    Support the full tipping syntax
+ * 1.1
+ *    Hide verification posts, inlining the verification
+ * 1.0
+ *    Add a "tip bitcoins" button.
+ */
 
 var baseTip = '0.01 BTC';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
