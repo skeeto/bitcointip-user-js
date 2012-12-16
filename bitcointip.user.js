@@ -23,10 +23,11 @@
  */
 
 var baseTip = '0.01 BTC';
+var api = 'http://bitcointip.net/api/gettips.php?callback=?';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
 var iconurl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AsUFTg5U/TSRQAAA2pJREFUOMtdk1toWwUAhr9zy0ly0pwmTdJ2SWqv2jm3trrVbrODOZk3HF4QRZwVVBR9E8QLylSY4ARfRHSiMlnFIUXm5pjY2VI6N2StoE3baWurtl26pElzbe7n+DCs0//5+7+Xn1/gf/ns9c49mk183FdXv1NRhGDFMFOrscTEcjh6vGgoR547NJm4mhfWi292uzSl8PHWHT33B5taEUQR0/wXSsRX+GH4+/jF2cgbrg2d7z35ynFzXfDJqzfo9T5tePed93QpisKl2QnW8gKxxUnc/nY0VcTXtBHFamPs3AjfnDzT72/r7XvmwLeGCODW5Q9237Wvq1Iucu5kP7+cH0ar6yKSEtEDPaxeDpP6a4pcOs62XbdyS+/WR/+YHj0AIH5+cFt3x807H1YsVkIjpymhoTd0Y7XbqW/uQLYo5EUnhihQjMxRyKTo3bMXt2556eCz17WImk14oqG5TYgtzKNabLi8QZo378Dt8dDY+SAV7Nx02yNEcjqlco7UwgxWm53OG7dYEisLT4veurpdkiSRXVlGVW2olRSJ8CwAZ798gdnR98mkkzhcPtLJJJVcknJ+jcaWFiTB2CtbVCUAJrJYpsqpYSJRVFUANvXcjavGi6NKZ3z0FLXyGoIhUcrncDirETBbRbNSqVzZy0BWBJy6HZvtiuC3yXFCF4YIL87Te/tDrCRNCvkigixjGAaGaSpiNp2ewzRxuNwoMpTKRUrlCgCKmcNpKVDMJpBkGVOxIUgKFruDWDSCibgohxcXBnNrmS61uo74fISYoXNtVycA2+/Yj9VmQ5ZVJi6M4LIW8QZbkSSZi6EQhimOiqK1/qPpn38qqboXWasmG51hcOBDwkthzg6eYDWWYujYIaTYOJ6aWnR/M5HlS4QmfjUdzppPpYEzf65ubytY/YFAr7ehDU0xEQpJ7O5GUtE5anxB/M4iWnU9ntYOTFFmoP8oy9Hsibf6Y29LAE/1PTAyOTbYXrshsKn2mnaqfX6KqSVqXE4op3AFWnEGWiiUy3z1xVFCU/NTuid439BYPLd+pq8P7xcTyxMvNjYFXr5+S0eV2+NFFEVMBLKZNDPTIYa/GyQaL5z2BTb2Pf/Oj9H/vPGfHHt3n3dlafIxq1W9VxSMzdlsRsvljcuZteJ5xaofee3w76eu5v8GlyNbHypvS6QAAAAASUVORK5CYII=";
 
-/* Add the button. */
+/* Add the "tip bitcoins" button after "give gold". */
 var $ = unsafeWindow.$, reddit = unsafeWindow;
 var tip = $('<a>tip bitcoins</a>').attr({
     'class': 'tip-bitcoins login-required',
@@ -34,7 +35,7 @@ var tip = $('<a>tip bitcoins</a>').attr({
 });
 $('a.give-gold').parent().after($('<li></li>').append(tip));
 
-/* Button functionality. */
+/* Tipping button functionality. */
 $('.tip-bitcoins').bind('click', function(event) {
     reddit.reply(event.target);
     var form = reddit.comment_reply_for_elem(event.target);
@@ -56,6 +57,11 @@ function getComment(element) {
     return element.closest('.comment');
 }
 
+function getCommentID(comment) {
+    var fullname = comment.find('input[name="thing_id"]').first().val();
+    return fullname.replace(/^t1_/, '');
+}
+
 /* Get the comment's content body. */
 function getBody(element) {
     return getComment(element).find('.md').first();
@@ -66,48 +72,71 @@ function getChildren(element) {
     return getComment(element).find('.comment');
 }
 
+/* Get the parent comment of this comment. */
+function getParent(element) {
+    return getComment(getComment(element).parent());
+}
+
 /* Return true if the element's comment is the target of the URL. */
 function isTarget(element) {
     return getComment(element).find('form').first().hasClass('border');
 }
 
-/* Hide verification posts. Note: t2_7vw3n is /u/bitcointip. */
+function hasTip(comment) {
+    var seen = false;
+    getBody(comment).children().each(function() {
+        if (!seen) seen = tipregex.test($(this).text());
+    });
+    return seen;
+}
+
+/* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
 getComment($('a.id-t2_7vw3n')).each(function() {
     var $this = $(this);
-
-    /* Hide bitcointip's reply (maybe). */
     if (getChildren($this).length === 0 && !isTarget($this)) {
         var expand = $this.find('.expand').first();
         reddit.hidecomment(expand);
     }
-
-    /* Determine status. */
-    var status = "Rejected", amount = '';
-    getBody($this).children().each(function() {
-        var $this = $(this);
-        if (/Verified/.test($this.text())) {
-            status = "Verified";
-            amount = $this.text().match(/> *([^ ]+ BTC)/)[1];
-        }
-    });
-
-    /* Mark the tip. */
-    getBody($this.parent()).children().each(function() {
-        var $this = $(this);
-        if (tipregex.test($this.text())) {
-            var icon = $('<img/>').attr({
-                src: iconurl,
-                style: 'display: inline; vertical-align: middle;'
-            });
-            $this.append(' &mdash; ');
-            $this.append(icon);
-            $this.append(" <b>" + status + "</b>");
-            if (amount) {
-                $this.append(" [" + amount + "]");
-            }
-        }
-    });
 });
+
+/* Find all the tip comments. */
+var tips = [];
+$('div.comment').each(function() {
+    var $this = $(this);
+    if (hasTip($this)) {
+        tips.push(getCommentID($this));
+    }
+});
+
+/* Get status info and update the tip's comment body. */
+if (tips.length > 0) {
+    $.getJSON(api + '&tips=' + tips, function(response) {
+        function capitalize(string) {
+            return string.replace(/^./, function(c) {
+                return c.toUpperCase();
+            });
+        }
+
+        response.forEach(function (tip) {
+            var comment = $('div.id-' + tip.fullname);
+            getBody(comment).children().each(function() {
+                var $this = $(this);
+                if (tipregex.test($this.text())) {
+                    var icon = $('<img/>').attr({
+                        src: iconurl,
+                        style: 'display: inline; vertical-align: middle;'
+                    });
+                    $this.append(' &mdash; ');
+                    $this.append(icon);
+                    $this.append(" <b>" + capitalize(tip.status) + "</b>");
+                    $this.append(' &rarr; ');
+                    $this.append(" " + tip.amountBTC + " BTC");
+                    $this.append(" [" + tip.amountUSD + " US$]");
+                }
+            });
+        });
+    });
+}
 
 /*
  * Useful tests:
