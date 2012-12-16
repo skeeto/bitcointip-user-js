@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Bitcoin Tip Support on Reddit
+// @name         Extra Bitcointip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
 // @version      1.2
 // @license      Public Domain
