@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name         Bitcoin Tip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
-// @version      1.1.4
+// @version      1.2
 // @license      Public Domain
 // @include      http://*.reddit.com/r/*
 // ==/UserScript==
 
 /* Changelog:
+ * 1.2
+ *    Use the new bitcointip API to get status information
+ *    https://github.com/NerdfighterSean/bitcointip/blob/master/src/api/gettips.php
  * 1.1.4
  *    Don't hide verification when it has children
  *    Don't hide verification when it's the URL target
@@ -20,6 +23,12 @@
  *    Hide verification posts, inlining the verification
  * 1.0
  *    Add a "tip bitcoins" button.
+ *
+ * Useful tests:
+ *  http://www.reddit.com/r/bitcointip/comments/13iykn/b/c7dj8ia
+ *  http://www.reddit.com/r/bitcointip/comments/132nhq/t/c7c7iue
+ *  http://www.reddit.com/r/Bitcoin/comments/14i9e7/y/c7dc6w9
+ *  http://www.reddit.com/r/Bitcoin/comments/14qysn/
  */
 
 var baseTip = '0.01 BTC';
@@ -140,11 +149,3 @@ if (tips.length > 0) {
         });
     });
 }
-
-/*
- * Useful tests:
- *  http://www.reddit.com/r/bitcointip/comments/13iykn/b/c7dj8ia
- *  http://www.reddit.com/r/bitcointip/comments/132nhq/t/c7c7iue
- *  http://www.reddit.com/r/Bitcoin/comments/14i9e7/y/c7dc6w9
- *  http://www.reddit.com/r/Bitcoin/comments/14qysn/
- */
