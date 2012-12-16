@@ -3,7 +3,7 @@
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
 // @version      1.2
 // @license      Public Domain
-// @include      http://*.reddit.com/r/*
+// @include      http://*.reddit.com/*
 // ==/UserScript==
 
 /* Changelog:
@@ -42,7 +42,9 @@ var tip = $('<a>tip bitcoins</a>').attr({
     'class': 'tip-bitcoins login-required',
     'href': '#'
 });
-$('a.give-gold').parent().after($('<li></li>').append(tip));
+if (/^\/r\//.test(document.location.pathname)) {
+    $('a.give-gold').parent().after($('<li></li>').append(tip));
+}
 
 /* Tipping button functionality. */
 $('.tip-bitcoins').bind('click', function(event) {
