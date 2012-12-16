@@ -126,12 +126,15 @@ if (tips.length > 0) {
                         src: iconurl,
                         style: 'display: inline; vertical-align: middle;'
                     });
+                    var tx = $('<a>' + tip.amountBTC + ' BTC</a>').attr({
+                        href: tip.tx
+                    });
                     $this.append(' &mdash; ');
                     $this.append(icon);
-                    $this.append(" <b>" + capitalize(tip.status) + "</b>");
+                    $this.append(' <b>' + capitalize(tip.status) + '</b>');
                     $this.append(' &rarr; ');
-                    $this.append(" " + tip.amountBTC + " BTC");
-                    $this.append(" [" + tip.amountUSD + " US$]");
+                    $this.append(tx);
+                    $this.append(' [' + tip.amountUSD + ' US$]');
                 }
             });
         });
