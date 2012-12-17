@@ -68,6 +68,7 @@ function getComment(element) {
     return element.closest('.comment');
 }
 
+/* Get the fullname of the given comment. */
 function getCommentID(comment) {
     var fullname = comment.find('input[name="thing_id"]').first().val();
     return fullname.replace(/^t1_/, '');
@@ -93,6 +94,8 @@ function isTarget(element) {
     return getComment(element).find('form').first().hasClass('border');
 }
 
+/* Get the text node containing the comment's tip. Returns null if the
+ * comment has no tip. */
 function getCommentTip(comment) {
     var tip = null;
     getBody(comment).children().each(function() {
