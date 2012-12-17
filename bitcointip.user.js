@@ -1,12 +1,16 @@
 // ==UserScript==
 // @name         Extra Bitcointip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
-// @version      1.2
+// @version      1.2.1
 // @license      Public Domain
 // @include      http://*.reddit.com/*
 // ==/UserScript==
 
 /* Changelog:
+ * 1.2.1
+ *    More efficient validation marking
+ *    Fixed status names
+ *    Run on all of reddit, including user pages
  * 1.2
  *    Use the new bitcointip API to get status information
  *    https://github.com/NerdfighterSean/bitcointip/blob/master/src/api/gettips.php
