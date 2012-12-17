@@ -122,11 +122,12 @@ $('div.comment').each(function() {
 /* Get status info and update the tip's comment body. */
 if (tips.length > 0) {
     $.getJSON(api + '&tips=' + tips, function(response) {
-        function capitalize(string) {
-            return string.replace(/^./, function(c) {
-                return c.toUpperCase();
-            });
-        }
+        var display = {
+            "pending": "Verified",
+            "completed": "Verified",
+            "reversed": "Verified",
+            "cancelled": "Rejected"
+        };
 
         response.forEach(function (tip) {
             var comment = $('div.id-' + tip.fullname);
@@ -142,7 +143,7 @@ if (tips.length > 0) {
                     });
                     $this.append(' &mdash; ');
                     $this.append(icon);
-                    $this.append(' <b>' + capitalize(tip.status) + '</b>');
+                    $this.append(' <b>' + display[tip.status] + '</b>');
                     $this.append(' &rarr; ');
                     $this.append(tx);
                     $this.append(' [' + tip.amountUSD + ' US$]');
