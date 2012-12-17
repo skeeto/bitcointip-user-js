@@ -93,12 +93,14 @@ function isTarget(element) {
     return getComment(element).find('form').first().hasClass('border');
 }
 
-function hasTip(comment) {
-    var seen = false;
+function getCommentTip(comment) {
+    var tip = null;
     getBody(comment).children().each(function() {
-        if (!seen) seen = tipregex.test($(this).text());
+        if (!tip && tipregex.test($(this).text())) {
+            tip = $(this);
+        }
     });
-    return seen;
+    return tip;
 }
 
 /* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
@@ -111,44 +113,35 @@ getComment($('a.id-t2_7vw3n')).each(function() {
 });
 
 /* Find all the tip comments. */
-var tips = [];
+var tips = {};
 $('div.comment').each(function() {
     var $this = $(this);
-    if (hasTip($this)) {
-        tips.push(getCommentID($this));
-    }
+    var tip = getCommentTip($this);
+    if (tip) tips[getCommentID($this)] = tip;
 });
 
 /* Get status info and update the tip's comment body. */
-if (tips.length > 0) {
-    $.getJSON(api + '&tips=' + tips, function(response) {
-        var display = {
-            "pending": "Verified",
-            "completed": "Verified",
-            "reversed": "Verified",
-            "cancelled": "Rejected"
-        };
-
+if (Object.keys(tips).length > 0) {
+    var display = {
+        "pending": "Verified",
+        "completed": "Verified",
+        "reversed": "Verified",
+        "cancelled": "Rejected"
+    };
+    $.getJSON(api + '&tips=' + Object.keys(tips), function(response) {
         response.forEach(function (tip) {
-            var comment = $('div.id-' + tip.fullname);
-            getBody(comment).children().each(function() {
-                var $this = $(this);
-                if (tipregex.test($this.text())) {
-                    var icon = $('<img/>').attr({
-                        src: iconurl,
-                        style: 'display: inline; vertical-align: middle;'
-                    });
-                    var tx = $('<a>' + tip.amountBTC + ' BTC</a>').attr({
-                        href: tip.tx
-                    });
-                    $this.append(' &mdash; ');
-                    $this.append(icon);
-                    $this.append(' <b>' + display[tip.status] + '</b>');
-                    $this.append(' &rarr; ');
-                    $this.append(tx);
-                    $this.append(' [' + tip.amountUSD + ' US$]');
-                }
-            });
+            var node = tips[tip.fullname.replace(/^t1_/, '')];
+            node.append(' &mdash; ');
+            node.append($('<img/>').attr({
+                src: iconurl,
+                style: 'display: inline; vertical-align: middle;'
+            }));
+            node.append(' <b>' + display[tip.status] + '</b>');
+            node.append(' &rarr; ');
+            node.append($('<a>' + tip.amountBTC + ' BTC</a>').attr({
+                href: tip.tx
+            }));
+            node.append(' [' + tip.amountUSD + ' US$]');
         });
     });
 }
