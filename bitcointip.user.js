@@ -141,7 +141,7 @@ $('div.comment').each(function() {
     }
 });
 
-/* Get status info and update the tip's comment body. */
+/* Get status information about various tips. */
 var tipIDs = Object.keys(tips);
 if (tipIDs.length > 0) {
     var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
