@@ -144,7 +144,8 @@ $('div.comment').each(function() {
 });
 
 /* Get status info and update the tip's comment body. */
-if (Object.keys(tips).length > 0) {
+var tipIDs = Object.keys(tips);
+if (tipIDs.length > 0) {
     var iconStyle = 'vertical-align: middle; margin-left: 8px;';
     var display = {
         "pending": icons.verified,
@@ -152,7 +153,7 @@ if (Object.keys(tips).length > 0) {
         "reversed": icons.verified,
         "cancelled": icons.rejected
     };
-    $.getJSON(api.gettips + '&tips=' + Object.keys(tips), function(response) {
+    $.getJSON(api.gettips + '&tips=' + tipIDs, function(response) {
         response.forEach(function (tip) {
             var id = tip.fullname.replace(/^t._/, '');
             var tagline = tips[id].find('.tagline').first();
@@ -176,5 +177,26 @@ if (Object.keys(tips).length > 0) {
                 }));
             }
         }
+    });
+
+    /* Put receiver information on comments. */
+    var comments = {};
+    $('div.comment').each(function() {
+        var $this = $(this);
+        comments[$this.commentID()] = $this;
+    });
+    var commentIDs = Object.keys(comments);
+    $.getJSON(api.gettipped + '&tipped=' + commentIDs, function(response) {
+        response.forEach(function (tipped) {
+            var id = tipped.fullname.replace(/^t._/, '');
+            var author = comments[id].commentName();
+            var tagline = comments[id].find('.tagline').first();
+            tagline.append($('<img/>').attr({
+                src: icons.tipped,
+                style: iconStyle,
+                title: tipped.tipQTY + ' redditors have given ' +
+                    author + ' $' + tipped.amountUSD + ' for this comment.'
+            }));
+        });
     });
 }
