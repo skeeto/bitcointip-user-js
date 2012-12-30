@@ -37,6 +37,7 @@
 
 var baseTip = '0.01 BTC';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
+var rejectTime = 60 * 60 * 1000; // milliseconds
 var api = {
     gettips: 'http://bitcointip.net/api/gettips.php?callback=?',
     gettipped: 'http://bitcointip.net/api/gettipped.php?callback=?'
@@ -87,6 +88,11 @@ $('.tip-bitcoins').bind('click', function(event) {
         return full.replace(/^t1_/, '');
     };
 
+    /** Get the comment's post time for the first selected comment. */
+    $.fn.commentDate = function() {
+        return new Date(this.find('.tagline time').first().attr('datetime'));
+    };
+
     /** Get the comment body for the first comment in the current set. */
     $.fn.commentBody = function() {
         return this.find('.md').first();
@@ -128,12 +134,13 @@ var tips = {};
 $('div.comment').each(function() {
     var $this = $(this);
     if ($this.hasTip()) {
-        tips[$this.commentID()] = $this.find('.tagline').first();
+        tips[$this.commentID()] = $this;
     }
 });
 
 /* Get status info and update the tip's comment body. */
 if (Object.keys(tips).length > 0) {
+    var iconStyle = 'vertical-align: middle; margin-left: 8px;';
     var display = {
         "pending": icons.verified,
         "completed": icons.verified,
@@ -142,13 +149,27 @@ if (Object.keys(tips).length > 0) {
     };
     $.getJSON(api.gettips + '&tips=' + Object.keys(tips), function(response) {
         response.forEach(function (tip) {
-            var tagline = tips[tip.fullname.replace(/^t._/, '')];
+            var id = tip.fullname.replace(/^t._/, '');
+            var tagline = tips[id].find('.tagline').first();
             var icon = $('<a/>').attr({href: tip.tx, target: '_blank'});
             tagline.append(icon.append($('<img/>').attr({
                 src: display[tip.status],
-                style: 'vertical-align: middle; margin-left: 8px;',
+                style: iconStyle,
                 title: '+$' + tip.amountUSD + ' -> ' + tip.receiver
             })));
+            delete tips[id];
         });
+
+        /* Deal with unanswered tips. */
+        for (var id in tips) {
+            if (Date.now() - tips[id].commentDate() > rejectTime) {
+                var tagline = tips[id].find('.tagline').first();
+                tagline.append($('<img/>').attr({
+                    src: icons.rejected,
+                    style: iconStyle,
+                    title: 'This tip is invalid.'
+                }));
+            }
+        }
     });
 }
