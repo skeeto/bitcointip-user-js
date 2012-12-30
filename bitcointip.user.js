@@ -155,7 +155,7 @@ if (tipIDs.length > 0) {
             tagline.append(icon.append($('<img/>').attr({
                 src: display[tip.status],
                 style: iconStyle,
-                title: '+$' + tip.amountUSD + ' -> ' + tip.receiver
+                title: '+$' + tip.amountUSD + '	→  ' + tip.receiver
             })));
             delete tips[id];
         });
