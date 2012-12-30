@@ -13,7 +13,7 @@
  *    Run on all of reddit, including user pages
  * 1.2
  *    Use the new bitcointip API to get status information
- *    https://github.com/NerdfighterSean/bitcointip/blob/master/src/api/gettips.php
+ *    https://github.com/NerdfighterSean/bitcointip/blob/master/src/api/
  * 1.1.4
  *    Don't hide verification when it has children
  *    Don't hide verification when it's the URL target
