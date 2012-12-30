@@ -143,10 +143,12 @@ if (Object.keys(tips).length > 0) {
     $.getJSON(api.gettips + '&tips=' + Object.keys(tips), function(response) {
         response.forEach(function (tip) {
             var tagline = tips[tip.fullname.replace(/^t._/, '')];
-            tagline.append($('<img/>').attr({
+            var icon = $('<a/>').attr({href: tip.tx, target: '_blank'});
+            tagline.append(icon.append($('<img/>').attr({
                 src: display[tip.status],
-                style: 'vertical-align: middle; margin-left: 8px;'
-            }));
+                style: 'vertical-align: middle; margin-left: 8px;',
+                title: '+$' + tip.amountUSD + ' -> ' + tip.receiver
+            })));
         });
     });
 }
