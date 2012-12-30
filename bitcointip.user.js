@@ -144,7 +144,7 @@ $('div.comment').each(function() {
 /* Get status info and update the tip's comment body. */
 var tipIDs = Object.keys(tips);
 if (tipIDs.length > 0) {
-    var iconStyle = 'vertical-align: middle; margin-left: 8px;';
+    var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
     var display = {
         "pending": icons.verified,
         "completed": icons.verified,
