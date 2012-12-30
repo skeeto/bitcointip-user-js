@@ -193,7 +193,7 @@ if (tipIDs.length > 0) {
             var title = comment.commentName() + ' $' + tipped.amountUSD +
                     ' for this comment.';
             if (plural) {
-                title = tipped.tipQTY + ' redditors have given ' + title;
+                title = 'redditors have given ' + title;
             } else {
                 title = 'a redditor has given ' + title;
             }
