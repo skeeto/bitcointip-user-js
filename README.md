@@ -5,9 +5,9 @@ next to reddit's "give gold". It also displays
 [bitcointip's](http://www.reddit.com/u/bitcointip/) verifications more
 concisely. Here's what it looks like.
 
-![](http://i.imgur.com/utc5K.png)
+![](http://i.imgur.com/BHd96.png)
 
-![](http://i.imgur.com/mBf3u.png)
+![](http://i.imgur.com/HseZA.png)
 
 It's verified to work in both Firefox with Greasemonkey and Chrome
 with Tampermonkey. It should work in other browsers that support user
