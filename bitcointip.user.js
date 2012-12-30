@@ -36,9 +36,16 @@
  */
 
 var baseTip = '0.01 BTC';
-var api = 'http://bitcointip.net/api/gettips.php?callback=?';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
-var iconurl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AsUFTg5U/TSRQAAA2pJREFUOMtdk1toWwUAhr9zy0ly0pwmTdJ2SWqv2jm3trrVbrODOZk3HF4QRZwVVBR9E8QLylSY4ARfRHSiMlnFIUXm5pjY2VI6N2StoE3baWurtl26pElzbe7n+DCs0//5+7+Xn1/gf/ns9c49mk183FdXv1NRhGDFMFOrscTEcjh6vGgoR547NJm4mhfWi292uzSl8PHWHT33B5taEUQR0/wXSsRX+GH4+/jF2cgbrg2d7z35ynFzXfDJqzfo9T5tePed93QpisKl2QnW8gKxxUnc/nY0VcTXtBHFamPs3AjfnDzT72/r7XvmwLeGCODW5Q9237Wvq1Iucu5kP7+cH0ar6yKSEtEDPaxeDpP6a4pcOs62XbdyS+/WR/+YHj0AIH5+cFt3x807H1YsVkIjpymhoTd0Y7XbqW/uQLYo5EUnhihQjMxRyKTo3bMXt2556eCz17WImk14oqG5TYgtzKNabLi8QZo378Dt8dDY+SAV7Nx02yNEcjqlco7UwgxWm53OG7dYEisLT4veurpdkiSRXVlGVW2olRSJ8CwAZ798gdnR98mkkzhcPtLJJJVcknJ+jcaWFiTB2CtbVCUAJrJYpsqpYSJRVFUANvXcjavGi6NKZ3z0FLXyGoIhUcrncDirETBbRbNSqVzZy0BWBJy6HZvtiuC3yXFCF4YIL87Te/tDrCRNCvkigixjGAaGaSpiNp2ewzRxuNwoMpTKRUrlCgCKmcNpKVDMJpBkGVOxIUgKFruDWDSCibgohxcXBnNrmS61uo74fISYoXNtVycA2+/Yj9VmQ5ZVJi6M4LIW8QZbkSSZi6EQhimOiqK1/qPpn38qqboXWasmG51hcOBDwkthzg6eYDWWYujYIaTYOJ6aWnR/M5HlS4QmfjUdzppPpYEzf65ubytY/YFAr7ehDU0xEQpJ7O5GUtE5anxB/M4iWnU9ntYOTFFmoP8oy9Hsibf6Y29LAE/1PTAyOTbYXrshsKn2mnaqfX6KqSVqXE4op3AFWnEGWiiUy3z1xVFCU/NTuid439BYPLd+pq8P7xcTyxMvNjYFXr5+S0eV2+NFFEVMBLKZNDPTIYa/GyQaL5z2BTb2Pf/Oj9H/vPGfHHt3n3dlafIxq1W9VxSMzdlsRsvljcuZteJ5xaofee3w76eu5v8GlyNbHypvS6QAAAAASUVORK5CYII=";
+var api = {
+    gettips: 'http://bitcointip.net/api/gettips.php?callback=?',
+    gettipped: 'http://bitcointip.net/api/gettipped.php?callback=?'
+};
+var icons = {
+    verified: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAt1BMVEX///8AAAAAyAAAuwAAwQcAvAcAvwAAwQYAyAUAxAUAxwQAwgQAvAMAxQYAvwYAxQYAxwU5yT060j460j871T89wUE9wkFGokdGu0hIzExJl09JmE9JxExJxE1K1U9K1k5Ll09LmVNMmVNM2FBNmlRRx1NSzlRTqlVUslZU1ldVq1hVrFdV2FhWrFhX21pZqlphrWJh3WRotGtrqm1stW91sXd2t3h5t3urz6zA2sHA28HG3sf4+PhvgZhQAAAAEXRSTlMAARweJSYoLTM0O0dMU1dYbkVIv+oAAACKSURBVHjaVc7XEoIwEIXhFRED1tBUxBaPFSyxK3n/5zIBb/yv9pudnVky2Ywxm345MHkVXByllPm4W24qrLbzdo1sLPPRepc+XlnSIAuz9DQYPtXnkLhUF/ysrndV3CYLRpbg2VtpxFMwfRfEl8IghEPUhB9t9lEQoke6FnzONfpU5kEIoKOn/z+/pREPWTic38sAAAAASUVORK5CYII=",
+    rejected: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAQlBMVEX///+qAAAAAAC/AADIABSaTU3YMDDcPj7cSEjeUFDiZGTld3fmfHzoiorqkJDqlpbupKTuqqr99fX99/f+/Pz////kWqLlAAAABXRSTlMAAwcIM6KYVMQAAABfSURBVHjaXc7JDsAgCEVRsYpIBzro//9qHyHpond3AgkklIuXPKJcqleIIEB6FwEhQEW0t4rlUtt+22ZTMQ09NqZyiK8BtBCvc9iDWegY526hBVRmdcQ9RgD9f/G+P1+JEwRF2vKhRgAAAABJRU5ErkJggg==",
+    tipped: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAANCAMAAACq939wAAAA/FBMVEWqVQCqcQCZZgCLXQCdYgDMjACOXACOXwCacQCfcQCqegCwggChggCnfwCwggCthACtgQC9iACleQC+iwDMlgDJlACmfgDDiwDBjADHlQDJnQDFlQDKmAChfRGjgBOmfhKmghKnghOqhBKthxOviROvjB+vjCGvjCOwiRSwihixixWxjSGziBOzkSmzky+0kSa0kiy3jxW8kxS8mCi8n0i8oEq9lBe9mSvOoBbUrTTUrTjbukXcsTDctDrdtj/exHbexXDfwWXfwmvjrBnksRjksx7lrhnqx17qyWTqymrq377rz3nr2qftuiHtvSv67cD67sj+997/+OX///8rcy1sAAAAHXRSTlMDCQoLDRQkKystMDc5Oj0+QUlKS0tMTVFSV15/i6wTI/gAAACWSURBVHjaHcrnAoFQGADQryI7sjNKN0RKZJVNQ8io938YN+f3ASDp1B9NAhD15UzXNH26KhNQXZyDBxZcNlloKadvFIbR56owUOFV9425ai8PrGwZaITQeisXoKHs7k/MP44ZaHYl54U5El8EdmjNEWbEjesf/Ljd9v0S1ETBtD3PNgUxB8nOQIybOGknAKgMy2FsmoIflIEZdK7PshkAAAAASUVORK5CYII="
+};
 
 /* Add the "tip bitcoins" button after "give gold". */
 var $ = unsafeWindow.$, reddit = unsafeWindow;
@@ -67,55 +74,52 @@ $('.tip-bitcoins').bind('click', function(event) {
     return false;
 });
 
-/* Get the top div container for the comment containing the element. */
-function getComment(element) {
-    return element.closest('.comment');
-}
+/* Reddit jQuery plugin. */
+(function($) {
+    /** Get the comment div for each element in the current set. */
+    $.fn.comment = function() {
+        return this.closest('.comment');
+    };
 
-/* Get the fullname of the given comment. */
-function getCommentID(comment) {
-    var fullname = comment.find('input[name="thing_id"]').first().val();
-    return fullname.replace(/^t1_/, '');
-}
+    /** Get the comment ID for the first selected comment. */
+    $.fn.commentID = function() {
+        var full = this.first().find('input[name="thing_id"]').first().val();
+        return full.replace(/^t1_/, '');
+    };
 
-/* Get the comment's content body. */
-function getBody(element) {
-    return getComment(element).find('.md').first();
-}
+    /** Get the comment body for the first comment in the current set. */
+    $.fn.commentBody = function() {
+        return this.find('.md').first();
+    };
 
-/* Get the children comments of this comment. */
-function getChildren(element) {
-    return getComment(element).find('.comment');
-}
+    /** Get the children comments for each comment in the current set. */
+    $.fn.commentChildren = function() {
+        return this.find('.comment');
+    };
 
-/* Get the parent comment of this comment. */
-function getParent(element) {
-    return getComment(getComment(element).parent());
-}
+    /** Get the parent comment for each comment in the current set. */
+    $.fn.commentParent = function() {
+        return this.parent().comment();
+    };
 
-/* Return true if the element's comment is the target of the URL. */
-function isTarget(element) {
-    return getComment(element).find('form').first().hasClass('border');
-}
+    /** Determine whether the first element is the target comment. */
+    $.fn.isTarget = function() {
+        return this.first().find('form').first().hasClass('border');
+    };
 
-/* Get the text node containing the comment's tip. Returns null if the
- * comment has no tip. */
-function getCommentTip(comment) {
-    var tip = null;
-    getBody(comment).children().each(function() {
-        if (!tip && tipregex.test($(this).text())) {
-            tip = $(this);
-        }
-    });
-    return tip;
-}
+    /** Return true if the first comment in the current set has a tip. */
+    $.fn.hasTip = function() {
+        return this.commentBody().children().is(function() {
+            return tipregex.test($(this).text());
+        });
+    };
+})($);
 
 /* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
-getComment($('a.id-t2_7vw3n')).each(function() {
+$('a.id-t2_7vw3n').comment().each(function() {
     var $this = $(this);
-    if (getChildren($this).length === 0 && !isTarget($this)) {
-        var expand = $this.find('.expand').first();
-        reddit.hidecomment(expand);
+    if ($this.commentChildren().length === 0 && !$this.isTarget()) {
+        reddit.hidecomment($this.find('.expand').first());
     }
 });
 
@@ -123,32 +127,26 @@ getComment($('a.id-t2_7vw3n')).each(function() {
 var tips = {};
 $('div.comment').each(function() {
     var $this = $(this);
-    var tip = getCommentTip($this);
-    if (tip) tips[getCommentID($this)] = tip;
+    if ($this.hasTip()) {
+        tips[$this.commentID()] = $this.find('.tagline').first();
+    }
 });
 
 /* Get status info and update the tip's comment body. */
 if (Object.keys(tips).length > 0) {
     var display = {
-        "pending": "Verified",
-        "completed": "Verified",
-        "reversed": "Verified",
-        "cancelled": "Rejected"
+        "pending": icons.verified,
+        "completed": icons.verified,
+        "reversed": icons.verified,
+        "cancelled": icons.rejected
     };
-    $.getJSON(api + '&tips=' + Object.keys(tips), function(response) {
+    $.getJSON(api.gettips + '&tips=' + Object.keys(tips), function(response) {
         response.forEach(function (tip) {
-            var node = tips[tip.fullname.replace(/^t1_/, '')];
-            node.append(' &mdash; ');
-            node.append($('<img/>').attr({
-                src: iconurl,
-                style: 'display: inline; vertical-align: middle;'
+            var tagline = tips[tip.fullname.replace(/^t._/, '')];
+            tagline.append($('<img/>').attr({
+                src: display[tip.status],
+                style: 'vertical-align: middle; margin-left: 8px;'
             }));
-            node.append(' <b>' + display[tip.status] + '</b>');
-            node.append(' &rarr; ');
-            node.append($('<a>' + tip.amountBTC + ' BTC</a>').attr({
-                href: tip.tx
-            }));
-            node.append(' [' + tip.amountUSD + ' US$]');
         });
     });
 }
