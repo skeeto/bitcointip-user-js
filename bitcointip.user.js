@@ -183,14 +183,24 @@ if (tipIDs.length > 0) {
     $.getJSON(api.gettipped + '&tipped=' + commentIDs, function(response) {
         response.forEach(function (tipped) {
             var id = tipped.fullname.replace(/^t._/, '');
-            var author = comments[id].commentName();
-            var tagline = comments[id].find('.tagline').first();
+            var comment = comments[id];
+            var tagline = comment.find('.tagline').first();
+            var plural = tipped.tipQTY > 1;
+            var title = comment.commentName() + ' $' + tipped.amountUSD +
+                    ' for this comment.';
+            if (plural) {
+                title = tipped.tipQTY + ' redditors have given ' + title;
+            } else {
+                title = 'a redditor has given ' + title;
+            }
             tagline.append($('<img/>').attr({
                 src: icons.tipped,
                 style: iconStyle,
-                title: tipped.tipQTY + ' redditors have given ' +
-                    author + ' $' + tipped.amountUSD + ' for this comment.'
+                title: title
             }));
+            if (plural) {
+                tagline.append('x' + tipped.tipQTY);
+            }
         });
     });
 }
