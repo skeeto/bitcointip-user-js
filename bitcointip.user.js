@@ -88,6 +88,11 @@ $('.tip-bitcoins').bind('click', function(event) {
         return full.replace(/^t1_/, '');
     };
 
+    /** Get the commenter's name for the first selected comment. */
+    $.fn.commentName = function() {
+        return this.first().find('.author').first().text();
+    };
+
     /** Get the comment's post time for the first selected comment. */
     $.fn.commentDate = function() {
         return new Date(this.find('.tagline time').first().attr('datetime'));
