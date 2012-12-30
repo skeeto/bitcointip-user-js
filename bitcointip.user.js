@@ -122,7 +122,7 @@ $('.tip-bitcoins').bind('click', function(event) {
             return tipregex.test($(this).text());
         });
     };
-})($);
+})(unsafeWindow.jQuery);
 
 /* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
 $('a.id-t2_7vw3n').comment().each(function() {
