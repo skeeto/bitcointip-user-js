@@ -143,6 +143,11 @@ $('.tip-bitcoins').bind('click', function(event) {
     $.fn.postID = function() {
         return this.attr('data-fullname').replace(/^t._/, '');
     };
+
+    /** Return true if the first seleted item is a comment. */
+    $.fn.isComment = function() {
+        return this.closest('.link').length === 0;
+    };
 })(unsafeWindow.jQuery);
 
 /* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
@@ -215,12 +220,17 @@ if (tipIDs.length > 0) {
             var thing = things[id];
             var tagline = thing.find('.tagline').first();
             var plural = tipped.tipQTY > 1;
-            var title = thing.thingName() + ' $' + tipped.amountUSD +
-                    ' for this comment.';
+            var title = '$' + tipped.amountUSD + ' to ' + thing.thingName() +
+                    ' for this ';
             if (plural) {
                 title = 'redditors have given ' + title;
             } else {
                 title = 'a redditor has given ' + title;
+            }
+            if (thing.isComment()) {
+                title += 'comment.';
+            } else {
+                title += 'submission.';
             }
             tagline.append($('<img/>').attr({
                 src: icons.tipped,
