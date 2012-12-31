@@ -59,7 +59,9 @@ var tip = $('<a>tip bitcoins</a>').attr({
 });
 if (/^\/r\//.test(document.location.pathname)) {
     $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
-    $('.link ul.buttons').append($('<li/>').append(tip.clone()));
+    if ($('.link').length === 1) {
+        $('.link ul.buttons').append($('<li/>').append(tip.clone()));
+    }
 }
 
 /* Tipping button functionality. */
