@@ -59,7 +59,7 @@ var tip = $('<a>tip bitcoins</a>').attr({
 });
 if (/^\/r\//.test(document.location.pathname)) {
     $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
-    if ($('.link').length === 1) {
+    if ($('.link').length === 1) { // Viewing a submission?
         $('.link ul.buttons').append($('<li/>').append(tip.clone()));
     }
 }
