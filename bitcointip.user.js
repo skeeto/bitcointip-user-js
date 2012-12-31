@@ -45,21 +45,30 @@ var icons = {
     rejected: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAQlBMVEX///+qAAAAAAC/AADIABSaTU3YMDDcPj7cSEjeUFDiZGTld3fmfHzoiorqkJDqlpbupKTuqqr99fX99/f+/Pz////kWqLlAAAABXRSTlMAAwcIM6KYVMQAAABfSURBVHjaXc7JDsAgCEVRsYpIBzro//9qHyHpond3AgkklIuXPKJcqleIIEB6FwEhQEW0t4rlUtt+22ZTMQ09NqZyiK8BtBCvc9iDWegY526hBVRmdcQ9RgD9f/G+P1+JEwRF2vKhRgAAAABJRU5ErkJggg==",
     tipped: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAANCAMAAACq939wAAAA/FBMVEWqVQCqcQCZZgCLXQCdYgDMjACOXACOXwCacQCfcQCqegCwggChggCnfwCwggCthACtgQC9iACleQC+iwDMlgDJlACmfgDDiwDBjADHlQDJnQDFlQDKmAChfRGjgBOmfhKmghKnghOqhBKthxOviROvjB+vjCGvjCOwiRSwihixixWxjSGziBOzkSmzky+0kSa0kiy3jxW8kxS8mCi8n0i8oEq9lBe9mSvOoBbUrTTUrTjbukXcsTDctDrdtj/exHbexXDfwWXfwmvjrBnksRjksx7lrhnqx17qyWTqymrq377rz3nr2qftuiHtvSv67cD67sj+997/+OX///8rcy1sAAAAHXRSTlMDCQoLDRQkKystMDc5Oj0+QUlKS0tMTVFSV15/i6wTI/gAAACWSURBVHjaHcrnAoFQGADQryI7sjNKN0RKZJVNQ8io938YN+f3ASDp1B9NAhD15UzXNH26KhNQXZyDBxZcNlloKadvFIbR56owUOFV9425ai8PrGwZaITQeisXoKHs7k/MP44ZaHYl54U5El8EdmjNEWbEjesf/Ljd9v0S1ETBtD3PNgUxB8nOQIybOGknAKgMy2FsmoIflIEZdK7PshkAAAAASUVORK5CYII="
 };
+var $ = unsafeWindow.$, reddit = unsafeWindow;
 
 /* Add the "tip bitcoins" button after "give gold". */
-var $ = unsafeWindow.$, reddit = unsafeWindow;
 var tip = $('<a>tip bitcoins</a>').attr({
     'class': 'tip-bitcoins login-required',
     'href': '#'
 });
 if (/^\/r\//.test(document.location.pathname)) {
-    $('a.give-gold').parent().after($('<li></li>').append(tip));
+    $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
+    $('.link ul.buttons').append($('<li/>').append(tip.clone()));
 }
 
 /* Tipping button functionality. */
 $('.tip-bitcoins').bind('click', function(event) {
-    reddit.reply(event.target);
-    var form = reddit.comment_reply_for_elem(event.target);
+    var $target = $(event.target);
+    var form = null;
+    if ($target.closest('.link').length > 0) {
+        /* Post */
+        form = $('.usertext-edit').first();
+    } else {
+        /* Comment */
+        reddit.reply(event.target);
+        form = reddit.comment_reply_for_elem(event.target);
+    }
     var textarea = form.find('textarea');
     if (!textarea.val().match(tipregex)) {
         var insert = '+tip ' + baseTip;
