@@ -1,12 +1,16 @@
 // ==UserScript==
 // @name         Extra Bitcointip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
-// @version      1.3.0
+// @version      1.3.1
 // @license      Public Domain
 // @include      http://*.reddit.com/*
 // ==/UserScript==
 
 /* Changelog:
+ * 1.3.1
+ *    A tip button on posts
+ *    Verification icons on posts
+ *    Small display tweaks
  * 1.3.0
  *    New verification and rejection markings
  *    Use the new gettipped API
