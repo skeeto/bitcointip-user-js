@@ -1,1 +1,0 @@
- * Tip button on posts
