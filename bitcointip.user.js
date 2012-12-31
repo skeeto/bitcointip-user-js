@@ -4,6 +4,7 @@
 // @version      1.3.1
 // @license      Public Domain
 // @include      http://*.reddit.com/*
+// @exclude      http://*.reddit.com/user/bitcointip
 // ==/UserScript==
 
 /* Changelog:
