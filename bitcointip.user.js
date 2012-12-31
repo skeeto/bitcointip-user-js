@@ -95,8 +95,8 @@ $('.tip-bitcoins').bind('click', function(event) {
         return full.replace(/^t1_/, '');
     };
 
-    /** Get the commenter's name for the first selected comment. */
-    $.fn.commentName = function() {
+    /** Get the commenter/poster name for the first selected comment. */
+    $.fn.thingName = function() {
         return this.first().find('.author').first().text();
     };
 
@@ -130,6 +130,11 @@ $('.tip-bitcoins').bind('click', function(event) {
         return this.commentBody().children().is(function() {
             return tipregex.test($(this).text());
         });
+    };
+
+    /** Return the link ID for the first post in the selection. */
+    $.fn.postID = function() {
+        return this.attr('data-fullname').replace(/^t._/, '');
     };
 })(unsafeWindow.jQuery);
 
@@ -187,19 +192,23 @@ if (tipIDs.length > 0) {
     });
 
     /* Put receiver information on comments. */
-    var comments = {};
+    var things = {};
     $('div.comment').each(function() {
         var $this = $(this);
-        comments[$this.commentID()] = $this;
+        things[$this.commentID()] = $this;
     });
-    var commentIDs = Object.keys(comments);
-    $.getJSON(api.gettipped + '&tipped=' + commentIDs, function(response) {
+    $('div.link').each(function() {
+        var $this = $(this);
+        things[$this.postID()] = $this;
+    });
+    var thingIDs = Object.keys(things);
+    $.getJSON(api.gettipped + '&tipped=' + thingIDs, function(response) {
         response.forEach(function (tipped) {
             var id = tipped.fullname.replace(/^t._/, '');
-            var comment = comments[id];
-            var tagline = comment.find('.tagline').first();
+            var thing = things[id];
+            var tagline = thing.find('.tagline').first();
             var plural = tipped.tipQTY > 1;
-            var title = comment.commentName() + ' $' + tipped.amountUSD +
+            var title = thing.thingName() + ' $' + tipped.amountUSD +
                     ' for this comment.';
             if (plural) {
                 title = 'redditors have given ' + title;
