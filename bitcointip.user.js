@@ -40,10 +40,9 @@
 
 var baseTip = '0.01 BTC';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
-var rejectTime = 60 * 60 * 1000; // milliseconds
 var api = {
-    gettips: 'http://bitcointip.net/api/gettips.php?callback=?',
-    gettipped: 'http://bitcointip.net/api/gettipped.php?callback=?'
+    gettips: 'http://bitcointip.net/api/gettipsnew.php?callback=?&',
+    gettipped: 'http://bitcointip.net/api/gettipped.php?callback=?&'
 };
 var icons = {
     verified: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAt1BMVEX///8AAAAAyAAAuwAAwQcAvAcAvwAAwQYAyAUAxAUAxwQAwgQAvAMAxQYAvwYAxQYAxwU5yT060j460j871T89wUE9wkFGokdGu0hIzExJl09JmE9JxExJxE1K1U9K1k5Ll09LmVNMmVNM2FBNmlRRx1NSzlRTqlVUslZU1ldVq1hVrFdV2FhWrFhX21pZqlphrWJh3WRotGtrqm1stW91sXd2t3h5t3urz6zA2sHA28HG3sf4+PhvgZhQAAAAEXRSTlMAARweJSYoLTM0O0dMU1dYbkVIv+oAAACKSURBVHjaVc7XEoIwEIXhFRED1tBUxBaPFSyxK3n/5zIBb/yv9pudnVky2Ywxm345MHkVXByllPm4W24qrLbzdo1sLPPRepc+XlnSIAuz9DQYPtXnkLhUF/ysrndV3CYLRpbg2VtpxFMwfRfEl8IghEPUhB9t9lEQoke6FnzONfpU5kEIoKOn/z+/pREPWTic38sAAAAASUVORK5CYII=",
@@ -177,8 +176,9 @@ if (tipIDs.length > 0) {
         "reversed": icons.verified,
         "cancelled": icons.rejected
     };
-    $.getJSON(api.gettips + '&tips=' + tipIDs, function(response) {
-        response.forEach(function (tip) {
+    $.getJSON(api.gettips + 'tips=' + tipIDs, function(response) {
+        var lastEvaluated = new Date(response.last_evaluated * 1000);
+        response.tips.forEach(function (tip) {
             var id = tip.fullname.replace(/^t._/, '');
             var tagline = tips[id].find('.tagline').first();
             var icon = $('<a/>').attr({href: tip.tx, target: '_blank'});
@@ -192,7 +192,7 @@ if (tipIDs.length > 0) {
 
         /* Deal with unanswered tips. */
         for (var id in tips) {
-            if (Date.now() - tips[id].commentDate() > rejectTime) {
+            if (tips[id].commentDate() < lastEvaluated) {
                 var tagline = tips[id].find('.tagline').first();
                 tagline.append($('<img/>').attr({
                     src: icons.rejected,
@@ -214,7 +214,7 @@ if (tipIDs.length > 0) {
         things[$this.postID()] = $this;
     });
     var thingIDs = Object.keys(things);
-    $.getJSON(api.gettipped + '&tipped=' + thingIDs, function(response) {
+    $.getJSON(api.gettipped + 'tipped=' + thingIDs, function(response) {
         response.forEach(function (tipped) {
             var id = tipped.fullname.replace(/^t._/, '');
             var thing = things[id];
