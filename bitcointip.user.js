@@ -44,6 +44,11 @@
 
 var baseTip = '0.01 BTC';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
+var botDownThreshold = 15 * 60 * 1000; // milliseconds
+var botStatusHtml = {
+    up: '<b>UP</b>',
+    down: '<b>DOWN</b>'
+}
 var api = {
     gettips: 'http://bitcointip.net/api/gettips.php?callback=?&',
     gettipped: 'http://bitcointip.net/api/gettipped.php?callback=?&'
@@ -171,8 +176,9 @@ $('div.comment').each(function() {
 });
 
 /* Get status information about various tips. */
+var inTipSubreddit = /^\/r\/bitcointip/.test(document.location.pathname);
 var tipIDs = Object.keys(tips);
-if (tipIDs.length > 0) {
+if (tipIDs.length > 0 || inTipSubreddit) {
     var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
     var display = {
         "pending": icons.verified,
@@ -182,6 +188,16 @@ if (tipIDs.length > 0) {
     };
     $.getJSON(api.gettips + 'tips=' + tipIDs, function(response) {
         var lastEvaluated = new Date(response.last_evaluated * 1000);
+        if (inTipSubreddit) {
+            var botStatus = null;
+            if (Date.now() - lastEvaluated > botDownThreshold) {
+                botStatus = botStatusHtml.down;
+            } else {
+                botStatus = botStatusHtml.up;
+            }
+            $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
+        }
+
         response.tips.forEach(function (tip) {
             var id = tip.fullname.replace(/^t._/, '');
             var tagline = tips[id].find('.tagline').first();
