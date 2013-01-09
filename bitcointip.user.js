@@ -46,9 +46,9 @@ var baseTip = '0.01 BTC';
 var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc))|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
 var botDownThreshold = 15 * 60 * 1000; // milliseconds
 var botStatusHtml = {
-    up: '<b>UP</b>',
-    down: '<b>DOWN</b>'
-}
+    up: '<span class="status-up">UP</span>',
+    down: '<span class="status-down">DOWN</span>'
+};
 var api = {
     gettips: 'http://bitcointip.net/api/gettips.php?callback=?&',
     gettipped: 'http://bitcointip.net/api/gettipped.php?callback=?&'
