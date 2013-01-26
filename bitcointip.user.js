@@ -180,6 +180,7 @@ $('div.comment').each(function() {
 /* Get status information about various tips. */
 var inTipSubreddit = /^\/r\/bitcointip/.test(document.location.pathname);
 var tipIDs = Object.keys(tips);
+var confirmedIDs = [];
 if (tipIDs.length > 0 || inTipSubreddit) {
     var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
     var display = {
@@ -209,6 +210,8 @@ if (tipIDs.length > 0 || inTipSubreddit) {
                 style: iconStyle,
                 title: '+$' + tip.amountUSD + '	→  ' + tip.receiver
             })));
+            confirmedIDs.push(id);
+            tips[id].attr('id', 't1_' + id);
             delete tips[id];
         });
 
@@ -254,11 +257,28 @@ if (tipIDs.length > 0 || inTipSubreddit) {
             } else {
                 title += 'submission.';
             }
-            tagline.append($('<img/>').attr({
+            var icon = $('<img/>').attr({
                 src: icons.tipped,
                 style: iconStyle,
                 title: title
-            }));
+            });
+
+            /* Attempt to link to the first tip. */
+            var foundParent = false;
+            thing.commentChildren().each(function() {
+                if (!foundParent) {
+                    var $this = $(this);
+                    var id = $this.commentID();
+                    if ($.inArray(id, confirmedIDs) >= 0) {
+                        icon = $('<a/>').attr({
+                            href: '#t1_' + $this.commentID()
+                        }).append(icon);
+                        foundParent = true;
+                    }
+                }
+            });
+
+            tagline.append(icon);
             if (plural) {
                 tagline.append('x' + tipped.tipQTY);
             }
