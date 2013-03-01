@@ -56,7 +56,8 @@ var botStatusHtml = {
 };
 var api = {
     gettips: 'http://bitcointip.net/api/gettips.php?',
-    gettipped: 'http://bitcointip.net/api/gettipped.php?'
+    gettipped: 'http://bitcointip.net/api/gettipped.php?',
+    subreddits: 'http://bitcointip.net/api/subreddits.php'
 };
 var icons = {
     completed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAt1BMVEX///8AAAAAyAAAuwAAwQcAvAcAvwAAwQYAyAUAxAUAxwQAwgQAvAMAxQYAvwYAxQYAxwU5yT060j460j871T89wUE9wkFGokdGu0hIzExJl09JmE9JxExJxE1K1U9K1k5Ll09LmVNMmVNM2FBNmlRRx1NSzlRTqlVUslZU1ldVq1hVrFdV2FhWrFhX21pZqlphrWJh3WRotGtrqm1stW91sXd2t3h5t3urz6zA2sHA28HG3sf4+PhvgZhQAAAAEXRSTlMAARweJSYoLTM0O0dMU1dYbkVIv+oAAACKSURBVHjaVc7XEoIwEIXhFRED1tBUxBaPFSyxK3n/5zIBb/yv9pudnVky2Ywxm345MHkVXByllPm4W24qrLbzdo1sLPPRepc+XlnSIAuz9DQYPtXnkLhUF/ysrndV3CYLRpbg2VtpxFMwfRfEl8IghEPUhB9t9lEQoke6FnzONfpU5kEIoKOn/z+/pREPWTic38sAAAAASUVORK5CYII=",
@@ -103,6 +104,30 @@ $('.tip-bitcoins').bind('click', function(event) {
     }
     return false;
 });
+
+/* Subreddit indicator. */
+var subreddit = (function(match) {
+    if (match) {
+        return match[1];
+    } else {
+        return null;
+    }
+}(location.pathname.match(/\/r\/([^/]+)/)));
+if (subreddit) {
+    $.getJSON(api.subreddits, function(data) {
+        if (data[0].subreddits.indexOf(subreddit) >= 0) {
+            $('#header-bottom-right form.logout')
+                .before($('<span>|</span>').attr({
+                    'class': 'separator'
+                }))
+                .prev().before($('<img/>').attr({
+                    'src': icons.tipped,
+                    'style': 'vertical-align: text-bottom;',
+                    'title': 'Tips enabled in this subreddit.'
+                }));
+        }
+    });
+}
 
 /* Reddit jQuery plugin. */
 (function($) {
