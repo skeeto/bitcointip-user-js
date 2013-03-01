@@ -57,7 +57,8 @@ var botStatusHtml = {
 var api = {
     gettips: 'http://bitcointip.net/api/gettips.php?',
     gettipped: 'http://bitcointip.net/api/gettipped.php?',
-    subreddits: 'http://bitcointip.net/api/subreddits.php'
+    subreddits: 'http://bitcointip.net/api/subreddits.php',
+    balance: 'http://bitcointip.net/api/balance.php'
 };
 var icons = {
     completed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAt1BMVEX///8AAAAAyAAAuwAAwQcAvAcAvwAAwQYAyAUAxAUAxwQAwgQAvAMAxQYAvwYAxQYAxwU5yT060j460j871T89wUE9wkFGokdGu0hIzExJl09JmE9JxExJxE1K1U9K1k5Ll09LmVNMmVNM2FBNmlRRx1NSzlRTqlVUslZU1ldVq1hVrFdV2FhWrFhX21pZqlphrWJh3WRotGtrqm1stW91sXd2t3h5t3urz6zA2sHA28HG3sf4+PhvgZhQAAAAEXRSTlMAARweJSYoLTM0O0dMU1dYbkVIv+oAAACKSURBVHjaVc7XEoIwEIXhFRED1tBUxBaPFSyxK3n/5zIBb/yv9pudnVky2Ywxm345MHkVXByllPm4W24qrLbzdo1sLPPRepc+XlnSIAuz9DQYPtXnkLhUF/ysrndV3CYLRpbg2VtpxFMwfRfEl8IghEPUhB9t9lEQoke6FnzONfpU5kEIoKOn/z+/pREPWTic38sAAAAASUVORK5CYII=",
@@ -67,6 +68,12 @@ var icons = {
     reversed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABOklEQVR42p2SvU4CQRSFj+9h7DQ2VmsDCy0/Cw2wsNtuRwixIiQ8CZaWGDBaaAiJyVAg2xi1AaTQ19jyOHeSIbLBxuIkM7Pn23PvnQHJPSngNAYcK9mnPWng/LpaZVoadg9CC+BSDNsg4FcU7bRpNjkslaiAYAfZhL+AuFbjQ6PBYaXCZ6AK4Mj0IMBGH4rptVjkW73Ote9zUS5z2u/zfTzmRBL1XoNniIFjgdaeZ0yjMORNocCZ1nQwYJIk3CrFSatlIGkDM+BEouNMhndRZEyjTof3vZ5Zfy+XfOp2zQ+ND3BMkoWkhE+lxLwHzPN5rjzPTtLZ9fSRzZqPj+22MaeBlesaSIZmp3dhQZXLcaQHcev7sjZnFngBwr17mgNFC+pSRRawZV0dfBFy89ogDYvEbBMav33/ens/XHaDp7U/bFsAAAAASUVORK5CYII="
 };
 var $ = unsafeWindow.$, reddit = unsafeWindow;
+
+/* Helper functions. */
+
+function identity(x) {
+    return x;
+}
 
 /* Add the "tip bitcoins" button after "give gold". */
 var tip = $('<a>tip bitcoins</a>').attr({
@@ -127,6 +134,50 @@ if (subreddit) {
                 }));
         }
     });
+}
+
+/* Balance indicator. */
+var user = $('#header-bottom-right span.user a').text();
+if (user === "login or register") {
+    user = null;
+}
+var address = reddit.localStorage[user + '_address'];
+var balance = null;
+
+function showBalance() {
+    $.getJSON(api.balance, {
+        username: user,
+        address: address
+    }, function (json) {
+        balance = json[0];
+        $('#header-bottom-right form.logout').before($('<span>|</span>').attr({
+            'class': 'separator'
+        })).prev().before($('<span/>').attr({
+            'class': 'hover'
+        }).text('$' + balance.balanceUSD));
+    });
+}
+
+if (user != null && address == null) {
+    var redditMessages = 'http://www.reddit.com/message/messages.json';
+    $.getJSON(redditMessages, function(messages) {
+        /* Search messages for a bitcointip response. */
+        address = messages.data.children.filter(function (message) {
+            return message.data.author === 'bitcointip';
+        }).map(function (message) {
+            var pattern = /Deposit Address: \| \[\*\*([a-zA-Z0-9]+)\*\*\]/;
+            var address = message.data.body.match(pattern);
+            if (address) {
+                return address[1];
+            } else {
+                return false;
+            }
+        }).filter(identity)[0];
+        reddit.localStorage[user + '_address'] = address;
+        showBalance();
+    });
+} else if (user != null && address != null) {
+    showBalance();
 }
 
 /* Reddit jQuery plugin. */
