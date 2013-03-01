@@ -143,6 +143,13 @@ if (user === "login or register") {
 }
 var address = reddit.localStorage[user + '_address'];
 var balance = null;
+if (reddit.localStorage.balanceUnits == null) {
+    reddit.localStorage.balanceUnits = 'balanceUSD';
+}
+var displayUnits = {
+    balanceUSD: '$',
+    balanceBTC: '฿'
+};
 
 function showBalance() {
     $.getJSON(api.balance, {
@@ -150,11 +157,21 @@ function showBalance() {
         address: address
     }, function (json) {
         balance = json[0];
+        var units = reddit.localStorage.balanceUnits;
         $('#header-bottom-right form.logout').before($('<span>|</span>').attr({
             'class': 'separator'
-        })).prev().before($('<span/>').attr({
-            'class': 'hover'
-        }).text('$' + balance.balanceUSD));
+        })).prev().before($('<a/>').attr({
+            'class': 'hover',
+            'href': '#'
+        }).on('click', function() {
+            if (reddit.localStorage.balanceUnits === 'balanceUSD') {
+                reddit.localStorage.balanceUnits = 'balanceBTC';
+            } else {
+                reddit.localStorage.balanceUnits = 'balanceUSD';
+            }
+            units = reddit.localStorage.balanceUnits;
+            $(this).text(displayUnits[units] + balance[units]);
+        }).text(displayUnits[units] + balance[units]));
     });
 }
 
