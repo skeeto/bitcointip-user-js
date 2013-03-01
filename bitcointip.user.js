@@ -326,4 +326,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
  *
  * Multiple guilded to one receiver (for comparison),
  *   http://www.reddit.com/r/AdviceAnimals/comments/15mk25/c7ntrcc
+ *
+ * Reversed,
+ *   http://www.reddit.com/r/IAmA/comments/18tp7t/c8i8qto
  */
