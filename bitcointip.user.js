@@ -88,7 +88,7 @@ if (/^\/r\//.test(document.location.pathname)) {
 }
 
 /* Tipping button functionality. */
-$('.tip-bitcoins').bind('click', function(event) {
+$('.tip-bitcoins').on('click', function(event) {
     var $target = $(event.target);
     var form = null;
     if ($target.closest('.link').length > 0) {
