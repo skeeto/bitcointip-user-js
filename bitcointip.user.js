@@ -122,7 +122,7 @@ var subreddit = (function(match) {
 }(location.pathname.match(/\/r\/([^/]+)/)));
 if (subreddit) {
     $.getJSON(api.subreddits, function(data) {
-        if (data[0].subreddits.indexOf(subreddit) >= 0) {
+        if (data.subreddits.indexOf(subreddit) >= 0) {
             $('#header-bottom-right form.logout')
                 .before($('<span>|</span>').attr({
                     'class': 'separator'
@@ -155,8 +155,7 @@ function showBalance() {
     $.getJSON(api.balance, {
         username: user,
         address: address
-    }, function (json) {
-        balance = json[0];
+    }, function (balance) {
         var units = reddit.localStorage.balanceUnits;
         $('#header-bottom-right form.logout').before($('<span>|</span>').attr({
             'class': 'separator'
