@@ -67,7 +67,16 @@ var icons = {
     pending: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABM0lEQVR42p2SPUsDQRCG1/8hdoqNVezkGhsLjXIEzlMUkfSpLFIr+HcEEVT04vmRW4mXNUTDpYjJCQvp00iqcWdglmSJjcULu3fvM187AsbjKbUexGJWFwUW3l2PCyxfX+yBKwOvzYSyWKyiQXf3YdgrW+kOggGYgLsW4gx/AVkagKwdUsb3SGyVfH+OeiDgc5tMvXQTvlQAeSeE7HUHlDyFfvcK5P2xAUMEl4Spdx6h3EBoim/LULv0QT0XQSXn8DMagf5OLIRtCBWJBWq24YGMKmSK76ogH8/oPNRv0HypYkAeSoEzIUTRdJ6geQpo1ddh8FG0kO2p3/ToZ/p0QmYXGLQ9gnBoPL2VSTC+OTAlHuEZvzGA/YQ8cgY3GMwaJAa4rMrMjcCXd7aBM5Qmff/a",
     reversed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABOklEQVR42p2SvU4CQRSFj+9h7DQ2VmsDCy0/Cw2wsNtuRwixIiQ8CZaWGDBaaAiJyVAg2xi1AaTQ19jyOHeSIbLBxuIkM7Pn23PvnQHJPSngNAYcK9mnPWng/LpaZVoadg9CC+BSDNsg4FcU7bRpNjkslaiAYAfZhL+AuFbjQ6PBYaXCZ6AK4Mj0IMBGH4rptVjkW73Ote9zUS5z2u/zfTzmRBL1XoNniIFjgdaeZ0yjMORNocCZ1nQwYJIk3CrFSatlIGkDM+BEouNMhndRZEyjTof3vZ5Zfy+XfOp2zQ+ND3BMkoWkhE+lxLwHzPN5rjzPTtLZ9fSRzZqPj+22MaeBlesaSIZmp3dhQZXLcaQHcev7sjZnFngBwr17mgNFC+pSRRawZV0dfBFy89ogDYvEbBMav33/ens/XHaDp7U/bFsAAAAASUVORK5CYII="
 };
-var $ = unsafeWindow.$, reddit = unsafeWindow;
+var displayUnits = {
+    balanceUSD: '$',
+    balanceBTC: '฿',
+    balanceJPY: '¥',
+    balanceGBP: '£',
+    balanceEUR: '€'
+};
+var $ = unsafeWindow.$,
+    S = unsafeWindow.localStorage,
+    reddit = unsafeWindow;
 
 /* Helper functions. */
 
@@ -141,35 +150,32 @@ var user = $('#header-bottom-right span.user a').text();
 if (user === "login or register") {
     user = null;
 }
-var address = reddit.localStorage[user + '_address'];
+var address = S[user + '_address'];
 var balance = null;
-if (reddit.localStorage.balanceUnits == null) {
-    reddit.localStorage.balanceUnits = 'balanceUSD';
+if (S.balanceUnits == null) {
+    S.balanceUnits = 'balanceUSD';
 }
-var displayUnits = {
-    balanceUSD: '$',
-    balanceBTC: '฿'
-};
+
+function toggleBalanceUnits() {
+    var units = Object.keys(displayUnits);
+    var i = (units.indexOf(S.balanceUnits) + 1) % units.length;
+    return (S.balanceUnits = units[i]);
+}
 
 function showBalance() {
     $.getJSON(api.balance, {
         username: user,
         address: address
     }, function (balance) {
-        var units = reddit.localStorage.balanceUnits;
+        var units = S.balanceUnits;
         $('#header-bottom-right form.logout').before($('<span>|</span>').attr({
             'class': 'separator'
         })).prev().before($('<a/>').attr({
             'class': 'hover',
             'href': '#'
         }).on('click', function() {
-            if (reddit.localStorage.balanceUnits === 'balanceUSD') {
-                reddit.localStorage.balanceUnits = 'balanceBTC';
-            } else {
-                reddit.localStorage.balanceUnits = 'balanceUSD';
-            }
-            units = reddit.localStorage.balanceUnits;
-            $(this).text(displayUnits[units] + balance[units]);
+            var unit = toggleBalanceUnits();
+            $(this).text(displayUnits[unit] + balance[unit]);
         }).text(displayUnits[units] + balance[units]));
     });
 }
@@ -189,7 +195,7 @@ if (user != null && address == null) {
                 return false;
             }
         }).filter(identity)[0];
-        reddit.localStorage[user + '_address'] = address;
+        S[user + '_address'] = address;
         showBalance();
     });
 } else if (user != null && address != null) {
