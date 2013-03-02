@@ -172,6 +172,11 @@ function insertBalance() {
         username: user,
         address: address
     }, function (balance) {
+        if (!('balanceBTC' in balance)) {
+            /* Probably got the address wrong. */
+            S.removeItem('address.' + user);
+            return;
+        }
         var units = S.balanceUnits;
         $('#header-bottom-right form.logout').before($('<span>|</span>').attr({
             'class': 'separator'
@@ -186,8 +191,7 @@ function insertBalance() {
 }
 
 if (user != null && address == null) {
-    var redditMessages = '/message/messages.json';
-    $.getJSON(redditMessages, function(messages) {
+    $.getJSON('/message/messages.json', function(messages) {
         /* Search messages for a bitcointip response. */
         address = messages.data.children.filter(function (message) {
             return message.data.author === 'bitcointip';
@@ -199,9 +203,11 @@ if (user != null && address == null) {
             } else {
                 return false;
             }
-        }).filter(identity)[0];
-        S['address.' + user] = address;
-        insertBalance();
+        }).filter(identity)[0]; // Use the most recent
+        if (address) {
+            S['address.' + user] = address;
+            insertBalance();
+        }
     });
 } else if (user != null && address != null) {
     insertBalance();
