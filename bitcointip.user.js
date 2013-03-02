@@ -150,7 +150,7 @@ var user = $('#header-bottom-right span.user a').text();
 if (user === "login or register") {
     user = null;
 }
-var address = S[user + '_address'];
+var address = S['address.' + user];
 var balance = null;
 if (S.balanceUnits == null) {
     S.balanceUnits = 'balanceUSD';
@@ -162,7 +162,7 @@ function toggleBalanceUnits() {
     return (S.balanceUnits = units[i]);
 }
 
-function showBalance() {
+function insertBalance() {
     $.getJSON(api.balance, {
         username: user,
         address: address
@@ -174,8 +174,8 @@ function showBalance() {
             'class': 'hover',
             'href': '#'
         }).on('click', function() {
-            var unit = toggleBalanceUnits();
-            $(this).text(displayUnits[unit] + balance[unit]);
+            var units = toggleBalanceUnits();
+            $(this).text(displayUnits[units] + balance[units]);
         }).text(displayUnits[units] + balance[units]));
     });
 }
@@ -195,11 +195,11 @@ if (user != null && address == null) {
                 return false;
             }
         }).filter(identity)[0];
-        S[user + '_address'] = address;
-        showBalance();
+        S['address.' + user] = address;
+        insertBalance();
     });
 } else if (user != null && address != null) {
-    showBalance();
+    insertBalance();
 }
 
 /* Reddit jQuery plugin. */
