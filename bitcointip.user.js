@@ -181,7 +181,7 @@ function insertBalance() {
 }
 
 if (user != null && address == null) {
-    var redditMessages = 'http://www.reddit.com/message/messages.json';
+    var redditMessages = '/message/messages.json';
     $.getJSON(redditMessages, function(messages) {
         /* Search messages for a bitcointip response. */
         address = messages.data.children.filter(function (message) {
