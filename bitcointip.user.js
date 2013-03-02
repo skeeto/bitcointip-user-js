@@ -153,7 +153,7 @@ if (subreddit) {
 }
 
 /* Balance indicator. */
-var user = $('#header-bottom-right span.user a').text();
+var user = $('#header-bottom-right span.user a').first().text();
 if (user === "login or register") {
     user = null;
 }
