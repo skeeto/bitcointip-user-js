@@ -3,8 +3,8 @@
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
 // @version      1.3.5
 // @license      Public Domain
-// @include      http://*.reddit.com/*
-// @exclude      http://*.reddit.com/user/bitcointip
+// @include      http*://*.reddit.com/*
+// @exclude      http*://*.reddit.com/user/bitcointip
 // ==/UserScript==
 
 /* Changelog:
