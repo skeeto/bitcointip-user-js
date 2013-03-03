@@ -1,13 +1,16 @@
 // ==UserScript==
 // @name         Extra Bitcointip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
-// @version      1.4.2
+// @version      1.4.3
 // @license      Public Domain
 // @include      http*://*.reddit.com/*
 // @exclude      http*://*.reddit.com/user/bitcointip
 // ==/UserScript==
 
 /* Changelog:
+ * 1.4.3
+ *    Fix subreddit case-sensitivity bug
+ *    Adjusted "pending" icon color
  * 1.4.2
  *    Bug fixes with balances
  * 1.4.0
