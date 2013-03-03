@@ -138,7 +138,7 @@ var subreddit = (function(match) {
 }(location.pathname.match(/\/r\/([^/]+)/)));
 if (subreddit) {
     $.getJSON(api.subreddits, function(data) {
-        if (data.subreddits.indexOf(subreddit) >= 0) {
+        if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
             $('#header-bottom-right form.logout')
                 .before($('<span>|</span>').attr({
                     'class': 'separator'
