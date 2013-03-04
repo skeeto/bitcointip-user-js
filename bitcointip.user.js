@@ -333,7 +333,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
             if (tips[id].commentDate() < lastEvaluated) {
                 var tagline = tips[id].find('.tagline').first();
                 tagline.append($('<img/>').attr({
-                    src: icons.rejected,
+                    src: icons.cancelled,
                     style: iconStyle,
                     title: 'This tip is invalid.'
                 }));
