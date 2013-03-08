@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Extra Bitcointip Support on Reddit
 // @description  Add a tipping button (/u/bitcointip) and shrinks verifications
-// @version      1.4.4
+// @version      1.4.5
 // @license      Public Domain
 // @include      http*://*.reddit.com/*
 // @exclude      http*://*.reddit.com/user/bitcointip
 // ==/UserScript==
 
 /* Changelog:
+ * 1.4.5
+ *    Fix currency display precision
  * 1.4.4
  *    Fix cancelled icon bug
  *    Update to latest tip regexp
