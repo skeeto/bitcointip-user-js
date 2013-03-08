@@ -80,12 +80,12 @@ var icons = {
     pending: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABWUlEQVR4nI2Sy0sCURTGD6S2jjYFrdy0DNpEhokb8zFm5YyaO6NFYNGqF/0hPZYtR79FUbgw0BFtDKIgUCSpv8Od3XtGJzWDBj64h/l+954XdbtdGhQZkzNUd7ptifiXZygo0Wz0WsWoyHTMj4Wo6nRLQ7KdRuZz15bWSiF0GQOVXJ4hqP/COGDTjEO9SyByIcDHiUXiT+QsAaW1wabgi4KtVxVqM4lQVcFx4RS5tzy0vIgZFDVTnaYkFG6us2lbTyNws4ZAMYizwjk6nQ7KbQOJfMqCRBlERZpWruJYfvYigx02ZfUDHN2e8Pnpy8T+w6G4MIqI8HFH5Ut9SKZQ/jDYPAh4K36EGzGrkwz1avK8+/jn3n2WzaPASsNnQaJpvYG65ixwFV7Dj7iuQcul+Cwvs4Ga1fafOVUcC31Qpio1BJjO0PiNEJPn9osapeyNqLmW/lyj/+7eN1qRZT0kKLSqAAAAAElFTkSuQmCC",
     reversed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABOklEQVR42p2SvU4CQRSFj+9h7DQ2VmsDCy0/Cw2wsNtuRwixIiQ8CZaWGDBaaAiJyVAg2xi1AaTQ19jyOHeSIbLBxuIkM7Pn23PvnQHJPSngNAYcK9mnPWng/LpaZVoadg9CC+BSDNsg4FcU7bRpNjkslaiAYAfZhL+AuFbjQ6PBYaXCZ6AK4Mj0IMBGH4rptVjkW73Ote9zUS5z2u/zfTzmRBL1XoNniIFjgdaeZ0yjMORNocCZ1nQwYJIk3CrFSatlIGkDM+BEouNMhndRZEyjTof3vZ5Zfy+XfOp2zQ+ND3BMkoWkhE+lxLwHzPN5rjzPTtLZ9fSRzZqPj+22MaeBlesaSIZmp3dhQZXLcaQHcev7sjZnFngBwr17mgNFC+pSRRawZV0dfBFy89ogDYvEbBMav33/ens/XHaDp7U/bFsAAAAASUVORK5CYII="
 };
-var displayUnits = {
-    balanceUSD: '$',
-    balanceBTC: '฿',
-    balanceJPY: '¥',
-    balanceGBP: '£',
-    balanceEUR: '€'
+var displayCurrency = {
+    balanceUSD: {unit: '$', precision: 2},
+    balanceBTC: {unit: '฿'},
+    balanceJPY: {unit: '¥'},
+    balanceGBP: {unit: '£', precision: 2},
+    balanceEUR: {unit: '€', precision: 2}
 };
 var $ = unsafeWindow.$,
     S = unsafeWindow.localStorage,
@@ -164,15 +164,23 @@ if (user === "login or register") {
     user = null;
 }
 var address = S['address.' + user];
-var balance = null;
 if (S.balanceUnits == null) {
     S.balanceUnits = 'balanceUSD';
 }
 
 function toggleBalanceUnits() {
-    var units = Object.keys(displayUnits);
+    var units = Object.keys(displayCurrency);
     var i = (units.indexOf(S.balanceUnits) + 1) % units.length;
     return (S.balanceUnits = units[i]);
+}
+
+function currencyString(balance) {
+    var meta = displayCurrency[S.balanceUnits];
+    var quantity = balance[S.balanceUnits];
+    if (meta.precision) {
+        quantity = quantity.toFixed(meta.precision);
+    }
+    return meta.unit + quantity;
 }
 
 function insertBalance() {
@@ -192,9 +200,9 @@ function insertBalance() {
             'class': 'hover',
             'href': '#'
         }).on('click', function() {
-            var units = toggleBalanceUnits();
-            $(this).text(displayUnits[units] + balance[units]);
-        }).text(displayUnits[units] + balance[units]));
+            toggleBalanceUnits();
+            $(this).text(currencyString(balance));
+        }).text(currencyString(balance)));
     });
 }
 
