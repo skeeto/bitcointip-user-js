@@ -334,7 +334,8 @@ if (tipIDs.length > 0 || inTipSubreddit) {
             tagline.append(icon.append($('<img/>').attr({
                 src: icons[tip.status],
                 style: iconStyle,
-                title: '+$' + tip.amountUSD + '	→  ' + tip.receiver + ' (' + tip.status + ')'
+                title: '+$' + tip.amountUSD + '	→  ' + tip.receiver +
+                    ' (' + tip.status + ')'
             })));
             confirmedIDs.push(id);
             tips[id].attr('id', 't1_' + id);
