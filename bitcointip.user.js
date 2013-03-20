@@ -407,7 +407,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
 
             tagline.append(icon);
             if (plural) {
-                tagline.append('x' + tipped.tipQTY);
+                tagline.append($('<span/>').text('x' + tipped.tipQTY));
             }
         });
     });
