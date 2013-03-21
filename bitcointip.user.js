@@ -99,11 +99,36 @@ function identity(x) {
     return x;
 }
 
+/**
+ * Set textarea cursor position in jQuery.
+ */
+$.fn.setCursorPosition = function(pos) {
+    this.each(function(index, elem) {
+        if (elem.setSelectionRange) {
+            elem.setSelectionRange(pos, pos);
+        } else if (elem.createTextRange) {
+            var range = elem.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', pos);
+            range.moveStart('character', pos);
+            range.select();
+        }
+    });
+    return this;
+};
+
 /* Add the "tip bitcoins" button after "give gold". */
-var tip = $('<a>tip bitcoins</a>').attr({
-    'class': 'tip-bitcoins login-required',
-    'href': '#'
-});
+var tip =
+  $('<span class="tip-wrapper">' +
+      '<div class="dropdown srdrop" onclick="open_menu(this)">' +
+        '<a class="tip-bitcoins login-required">tip bitcoins</a>' +
+      '</div>' +
+      '<div class="drop-choices srdrop">' +
+        '<a class="choice tip-publicly">tip publicly</a>' +
+        '<a class="choice tip-privately">tip privately</a>' +
+      '</div>' +
+    '</span>');
+
 if (/^\/r\//.test(document.location.pathname)) {
     $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
     if ($('.link').length === 1) { // Viewing a submission?
@@ -111,29 +136,36 @@ if (/^\/r\//.test(document.location.pathname)) {
     }
 }
 
-/* Tipping button functionality. */
-$('.tip-bitcoins').on('click', function(event) {
+$('.tip-publicly').click(function(event) {
+    event.preventDefault();
     var $target = $(event.target);
     var form = null;
-    if ($target.closest('.link').length > 0) {
-        /* Post */
+    if ($target.closest('.link').length > 0) { /* Post */
         form = $('.usertext-edit').first();
-    } else {
-        /* Comment */
+    } else { /* Comment */
         reddit.reply(event.target);
         form = reddit.comment_reply_for_elem(event.target);
     }
     var textarea = form.find('textarea');
     if (!textarea.val().match(tipregex)) {
-        var insert = '+tip ' + baseTip;
-        if (textarea.val().length > 0) {
-            insert = '\n\n' + insert;
-        } else {
-            insert = insert + '\n\n';
-        }
-        textarea.val(textarea.val() + insert);
+        textarea.val(textarea.val() + '\n\n+tip ' + baseTip);
+        textarea.setCursorPosition(0);
     }
-    return false;
+});
+
+$('.tip-privately').click(function(event) {
+    event.preventDefault();
+    var form = reddit.comment_reply_for_elem(event.target);
+    if (form.find('textarea').val().length > 0) {
+        /* Confirm if a comment has been entered. */
+        if (!confirm('Really leave this page to tip privately?')) {
+            return;
+        }
+    }
+    var user = $(this).comment().find('.author').first().text();
+    var message = encodeURIComponent('+bitcointip @' + user + ' ' + baseTip);
+    var url = '/message/compose?to=bitcointip&subject=Tip&message=' + message;
+    window.location = url;
 });
 
 /* Subreddit indicator. */
