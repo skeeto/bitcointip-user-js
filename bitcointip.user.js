@@ -117,6 +117,34 @@ $.fn.setCursorPosition = function(pos) {
     return this;
 };
 
+/* Preferences object. */
+var preferences = null;
+
+function savePreferences() {
+    S.bitcointipPreferences = JSON.stringify(preferences);
+}
+
+function loadPreferences() {
+    try {
+        preferences = JSON.parse(S.bitcointipPreferences);
+    } catch(e) {
+        preferences = null;
+    }
+    if (preferences == null) {
+        preferences = {
+            baseTip: baseTip,
+            hide: true,
+            status: 'detailed',
+            currency: 'BTC',
+            balance: true,
+            subreddit: true
+        };
+        savePreferences();
+    }
+}
+
+loadPreferences();
+
 /* Add the "tip bitcoins" button after "give gold". */
 var tip =
   $('<span class="tip-wrapper">' +
