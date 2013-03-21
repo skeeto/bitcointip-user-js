@@ -155,14 +155,20 @@ $('.tip-publicly').click(function(event) {
 
 $('.tip-privately').click(function(event) {
     event.preventDefault();
-    var form = $(event.target).thing().find(".child .usertext:first");
+    var $target = $(event.target);
+    var form = null;
+    if ($target.closest('.link').length > 0) { /* Post */
+        form = $('.commentarea .usertext:first');
+    } else {
+        form = $target.thing().find(".child .usertext:first");
+    }
     if (form.length > 0 && form.find('textarea').val().length > 0) {
         /* Confirm if a comment has been entered. */
         if (!confirm('Really leave this page to tip privately?')) {
             return;
         }
     }
-    var user = $(this).comment().find('.author').first().text();
+    var user = $(this).thing().find('.author').first().text();
     var message = encodeURIComponent('+bitcointip @' + user + ' ' + baseTip);
     var url = '/message/compose?to=bitcointip&subject=Tip&message=' + message;
     window.location = url;
