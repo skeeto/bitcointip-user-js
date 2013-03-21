@@ -155,8 +155,8 @@ $('.tip-publicly').click(function(event) {
 
 $('.tip-privately').click(function(event) {
     event.preventDefault();
-    var form = reddit.comment_reply_for_elem(event.target);
-    if (form.find('textarea').val().length > 0) {
+    var form = $(event.target).thing().find(".child .usertext:first");
+    if (form.length > 0 && form.find('textarea').val().length > 0) {
         /* Confirm if a comment has been entered. */
         if (!confirm('Really leave this page to tip privately?')) {
             return;
