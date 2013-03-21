@@ -141,7 +141,7 @@ $('.tip-publicly').click(function(event) {
     var $target = $(event.target);
     var form = null;
     if ($target.closest('.link').length > 0) { /* Post */
-        form = $('.usertext-edit').first();
+        form = $('.commentarea .usertext:first');
     } else { /* Comment */
         reddit.reply(event.target);
         form = reddit.comment_reply_for_elem(event.target);
