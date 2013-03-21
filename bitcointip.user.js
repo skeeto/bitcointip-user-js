@@ -62,7 +62,6 @@
  *    Add a "tip bitcoins" button.
  */
 
-var baseTip = '0.01 BTC';
 var tipregex = /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i;
 var botDownThreshold = 15 * 60 * 1000; // milliseconds
 var botStatusHtml = {
@@ -117,6 +116,13 @@ $.fn.setCursorPosition = function(pos) {
     return this;
 };
 
+function quantity(object) {
+    var pref = preferences.currency.toUpperCase();
+    var unit = displayCurrency['balance' + pref];
+    var amount = object['amount' + pref];
+    return unit.unit + amount;
+}
+
 /* Preferences object. */
 var preferences = null;
 
@@ -132,7 +138,7 @@ function loadPreferences() {
     }
     if (preferences == null) {
         preferences = {
-            baseTip: baseTip,
+            baseTip: '0.01 BTC',
             hide: true,
             status: 'detailed',
             currency: 'BTC',
@@ -176,7 +182,7 @@ $('.tip-publicly').click(function(event) {
     }
     var textarea = form.find('textarea');
     if (!textarea.val().match(tipregex)) {
-        textarea.val(textarea.val() + '\n\n+tip ' + baseTip);
+        textarea.val(textarea.val() + '\n\n+tip ' + preferences.baseTip);
         textarea.setCursorPosition(0);
     }
 });
@@ -197,7 +203,8 @@ $('.tip-privately').click(function(event) {
         }
     }
     var user = $(this).thing().find('.author').first().text();
-    var message = encodeURIComponent('+bitcointip @' + user + ' ' + baseTip);
+    var message = encodeURIComponent('+bitcointip @' + user + ' ' +
+                                     preferences.baseTip);
     var url = '/message/compose?to=bitcointip&subject=Tip&message=' + message;
     window.location = url;
 });
@@ -210,7 +217,7 @@ var subreddit = (function(match) {
         return null;
     }
 }(location.pathname.match(/\/r\/([^/]+)/)));
-if (subreddit) {
+if (preferences.subreddit && subreddit) {
     $.getJSON(api.subreddits, function(data) {
         if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
             $('#header-bottom-right form.logout')
@@ -274,7 +281,7 @@ function insertBalance() {
     });
 }
 
-if (user != null && address == null) {
+if (preferences.balance && user != null && address == null) {
     $.getJSON('/message/messages.json', function(messages) {
         /* Search messages for a bitcointip response. */
         address = messages.data.children.filter(function (message) {
@@ -293,7 +300,7 @@ if (user != null && address == null) {
             insertBalance();
         }
     });
-} else if (user != null && address != null) {
+} else if (preferences.balance && user != null && address != null) {
     insertBalance();
 }
 
@@ -359,12 +366,14 @@ if (user != null && address == null) {
 })(unsafeWindow.jQuery);
 
 /* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
-$('a.id-t2_7vw3n').comment().each(function() {
-    var $this = $(this);
-    if ($this.commentChildren().length === 0 && !$this.isTarget()) {
-        reddit.hidecomment($this.find('.expand').first());
-    }
-});
+if (preferences.hide) {
+    $('a.id-t2_7vw3n').comment().each(function() {
+        var $this = $(this);
+        if ($this.commentChildren().length === 0 && !$this.isTarget()) {
+            reddit.hidecomment($this.find('.expand').first());
+        }
+    });
+}
 
 /* Find all the tip comments. */
 var tips = {};
@@ -400,7 +409,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
             tagline.append(icon.append($('<img/>').attr({
                 src: icons[tip.status],
                 style: iconStyle,
-                title: '+$' + tip.amountUSD + '	→  ' + tip.receiver +
+                title: quantity(tip) + ' → ' + tip.receiver +
                     ' (' + tip.status + ')'
             })));
             confirmedIDs.push(id);
@@ -438,7 +447,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
             var thing = things[id];
             var tagline = thing.find('.tagline').first();
             var plural = tipped.tipQTY > 1;
-            var title = '$' + tipped.amountUSD + ' to ' + thing.thingName() +
+            var title = quantity(tipped) + ' to ' + thing.thingName() +
                     ' for this ';
             if (plural) {
                 title = 'redditors have given ' + title;
