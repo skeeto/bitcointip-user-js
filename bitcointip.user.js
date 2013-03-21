@@ -63,7 +63,7 @@
  */
 
 var baseTip = '0.01 BTC';
-var tipregex = /((\+(bitcointip|bitcoin|tip|btctip|bittip|btc)( ((@?1[A-Za-z0-9]{25,35})|((@)?([A-Za-z0-9_-]{3,20}))))?( ((((\$)|&#36;|฿|&#3647;|&bitcoin;|¥|&#165;|&yen;|£|&#163;|&pound;|€|&#8364;|&euro;)? ?((\d|\,){0,10}(\d\.?|\.(\d|\,){0,10}))( ?(BTC|XBC|bitcoin|mBTC|CBC|MBC|millibitcoin|millibit|cBTC|bitcent|centibit|centibitcoin|USD|dollar|american|AUD|australian|CAD|canadian|GBP|pound|EUR|euro|JPY|yen)(s)?)?)|ALL|FLIP))( (NOVERIFY|VERIFY))?)|((\+((?!0)(\d{1,4})) internet(s)?)|(\+((?!0)(\d{1,4})) point(s)? to (Gryffindor|Slytherin|Ravenclaw|Hufflepuff))))/i;
+var tipregex = /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i;
 var botDownThreshold = 15 * 60 * 1000; // milliseconds
 var botStatusHtml = {
     up: '<span class="status-up">UP</span>',
