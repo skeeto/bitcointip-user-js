@@ -208,7 +208,7 @@ $('.tip-privately').click(function(event) {
     } else {
         form = $target.thing().find(".child .usertext:first");
     }
-    if (form.length > 0 && form.find('textarea').val().length > 0) {
+    if (form.length > 0 && form.find('textarea').val()) {
         /* Confirm if a comment has been entered. */
         if (!confirm('Really leave this page to tip privately?')) {
             return;
