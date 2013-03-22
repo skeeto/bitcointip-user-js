@@ -511,7 +511,9 @@ if (preferences.status !== 'none' && (tipIDs.length > 0 || inTipSubreddit)) {
 /* Preferences */
 (function() {
     if (location.pathname !== '/r/bitcointip/wiki/preferences') return;
-    $('div.md.wiki').wrap($('<form/>').attr({'class': 'tip-preferences'}));
+    $('div.md.wiki').wrap($('<form/>').attr({
+        'class': 'tip-preferences roundfield'
+    }));
 
     function makeText(name, value) {
         return $('<input/>').attr({
@@ -549,7 +551,8 @@ if (preferences.status !== 'none' && (tipIDs.length > 0 || inTipSubreddit)) {
     function fix(name, input) {
         var $li = $('a[href="/pref-' + name + '"]').parent();
         var label = $li.text();
-        $li.empty().append($('<label/>').text(label)).append(input);
+        $li.empty().append($('<label/>').text(label).addClass('roundfield'))
+            .append(input);
     }
 
     /* Build up the form. */
