@@ -152,6 +152,10 @@ function loadPreferences() {
         };
         savePreferences();
     }
+    if (preferences.status === 'basic') {
+        icons.pending = icons.completed;
+        icons.reversed = icons.completed;
+    }
 }
 
 loadPreferences();
@@ -404,7 +408,7 @@ $('div.comment').each(function() {
 var inTipSubreddit = /^\/r\/bitcointip/.test(document.location.pathname);
 var tipIDs = Object.keys(tips);
 var confirmedIDs = [];
-if (tipIDs.length > 0 || inTipSubreddit) {
+if (preferences.status !== 'none' && (tipIDs.length > 0 || inTipSubreddit)) {
     var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
     $.getJSON(api.gettips + 'tips=' + tipIDs, function(response) {
         var lastEvaluated = new Date(response.last_evaluated * 1000);
