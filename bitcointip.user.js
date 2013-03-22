@@ -490,7 +490,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
 
 /* Preferences */
 (function() {
-    if (location.pathname !== '/r/skeeto/wiki/index') return;
+    if (location.pathname !== '/r/bitcointip/wiki/preferences') return;
     $('div.md.wiki').wrap($('<form/>').attr({'class': 'tip-preferences'}));
 
     function makeText(name, value) {
