@@ -163,10 +163,10 @@ loadPreferences();
 /* Add the "tip bitcoins" button after "give gold". */
 var tip =
   $('<span class="tip-wrapper">' +
-      '<div class="dropdown srdrop" onclick="open_menu(this)">' +
+      '<div class="dropdown" onclick="open_menu(this)">' +
         '<a class="tip-bitcoins login-required">tip bitcoins</a>' +
       '</div>' +
-      '<div class="drop-choices srdrop">' +
+      '<div class="drop-choices">' +
         '<a class="choice tip-publicly">tip publicly</a>' +
         '<a class="choice tip-privately">tip privately</a>' +
       '</div>' +
