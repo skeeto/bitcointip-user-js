@@ -63,6 +63,7 @@
  */
 
 var tipregex = /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i;
+var tipregexFun = /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/;
 var botDownThreshold = 15 * 60 * 1000; // milliseconds
 var botStatusHtml = {
     up: '<span class="status-up">UP</span>',
@@ -354,6 +355,13 @@ if (preferences.balance && user != null && address == null) {
         });
     };
 
+    /** Return true if the first comment in the current set has a "fun" tip. */
+    $.fn.hasFunTip = function() {
+        return this.commentBody().children().is(function() {
+            return tipregexFun.test($(this).text());
+        });
+    };
+
     /** Return the link ID for the first post in the selection. */
     $.fn.postID = function() {
         return this.attr('data-fullname').replace(/^t._/, '');
@@ -377,10 +385,14 @@ if (preferences.hide) {
 
 /* Find all the tip comments. */
 var tips = {};
+var fun = {};
 $('div.comment').each(function() {
     var $this = $(this);
     if ($this.hasTip()) {
         tips[$this.commentID()] = $this;
+    } else if ($this.hasFunTip()) {
+        tips[$this.commentID()] = $this;
+        fun[$this.commentID()] = $this;
     }
 });
 
@@ -419,7 +431,7 @@ if (tipIDs.length > 0 || inTipSubreddit) {
 
         /* Deal with unanswered tips. */
         for (var id in tips) {
-            if (tips[id].commentDate() < lastEvaluated) {
+            if (!fun[id] && tips[id].commentDate() < lastEvaluated) {
                 var tagline = tips[id].find('.tagline').first();
                 tagline.append($('<img/>').attr({
                     src: icons.cancelled,
