@@ -277,17 +277,18 @@ var BitcoinTip = {
         });
     },
 
-    /** Find all comments matching a regex. */
+    /** Find all things matching a regex. */
     getTips: function getComments(regex) {
         var tips = {};
-        $('div.comment').each(function() {
+        $('div.comment, div.self, div.link').each(function() {
             var $this = $(this);
-            var match = $this.find('.md:first').children().is(function() {
-                return regex.test($(this).text());
-            });
+            var match = $this.find('.md:first, .title:first')
+                    .children().is(function() {
+                        return regex.test($(this).text());
+                    });
             if (match) {
-                var id = $this.find('input[name="thing_id"]:first').val();
-                tips[id.replace(/^t1_/, '')] = $this;
+                var id = $this.attr('data-fullname');
+                tips[id.replace(/^t._/, '')] = $this;
             }
         });
         return tips;
@@ -428,8 +429,13 @@ var BitcoinTip = {
         }
 
         if (this.options.status.value !== 'none') {
-            this.attachTipStatuses(this.getTips(this.tipregex));
-            this.attachReceiverStatus(this.getTips(/(?:)/));
+            var tips = this.getTips(this.tipregex);
+            var fun = this.getTips(this.tipregexFun);
+            var all = $.extend({}, tips, fun);
+            this.attachTipStatuses(all);
+            if (Object.keys(all).length > 0) {
+                this.attachReceiverStatus(this.getTips(/(?:)/));
+            }
         }
 
         if (RESUtils.currentSubreddit() === 'bitcointip') {
