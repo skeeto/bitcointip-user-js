@@ -209,9 +209,8 @@ modules['bitcoinTip'] = {
         $('a.id-t2_7vw3n').closest('.comment').each(function() {
             var $this = $(this);
             var isTarget = $this.find('form:first').hasClass('border');
-            if ($this.find('.comment').length === 0 && isTarget) {
-                //reddit.hidecomment($this.find('.expand').first());
-                // XXX
+            if ($this.find('.comment').length === 0 && !isTarget) {
+                $this.find('.expand').eq(2).click();
             }
         });
     },
