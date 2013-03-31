@@ -1,4 +1,31 @@
 modules['bitcoinTip'] = {
+    moduleID: 'bitcoinTip',
+    moduleName: 'bitcoinTip',
+    category: 'Users',
+    description: 'Send <a href="http://bitcoin.org/" target="_blank">' +
+        'bitcoin</a> to other redditors  via <a href="/r/bitcointip" ' +
+        'target="_blank">bitcointip</a>. <br><br>' +
+        'For more information, visit <a href="/r/bitcointip" ' +
+        'target="_blank">/r/bitcointip</a>  or <a href="/13iykn" ' +
+        'target="_blank">read the documentation</a>.',
+    isEnabled: function() {
+        return RESConsole.getModulePrefs(this.moduleID);
+    },
+    include: Array(
+            /https?:\/\/([a-z]+).reddit.com\/[\?]*/i
+    ),
+    exclude: Array(
+            /https?:\/\/([a-z]+).reddit.com\/[\?]*\/user\/bitcointip\/?/i
+    ),
+    isMatchURL: function() {
+        return RESUtils.isMatchURL(this.moduleID);
+    },
+    beforeLoad: function() {
+        RESUtils.addCSS('.tip-bitcoins { cursor: pointer; }');
+        RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
+        RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
+    },
+
     /** Specifies how to find tips. */
     tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
     tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
