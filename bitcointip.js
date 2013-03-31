@@ -144,6 +144,9 @@ modules['bitcoinTip'] = {
             amount = object['amountBTC'] || object['balanceBTC'];
             unit = this.currencies['BTC'];
         }
+        if (unit.precision) {
+            amount = parseFloat(amount).toFixed(unit.precision);
+        }
         return unit.unit + amount;
     },
 
