@@ -224,7 +224,7 @@ modules['bitcoinTip'] = {
     },
 
     getAddress: function getAddress(user) {
-        user = user || RESUtils.loggedInUser;
+        user = user || RESUtils.loggedInUser();
         var address = null;
         this.options.address.value.forEach(function(row) {
             if (row[0] === user) address = row[1];
@@ -233,7 +233,7 @@ modules['bitcoinTip'] = {
     },
 
     setAddress: function setAddress(user, address) {
-        user = user || RESUtils.loggedInUser;
+        user = user || RESUtils.loggedInUser();
         var set = false;
         this.options.address.value.forEach(function(row) {
             if (row[0] === user) {
