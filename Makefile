@@ -1,4 +1,4 @@
-JS = header.js changelog.js resutils.js bitcointip.js footer.js
+JS = header.js changelog.js res.js bitcointip.js footer.js
 
 bitcointip.user.js : $(JS)
 	  cat $^ > $@
