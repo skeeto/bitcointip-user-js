@@ -365,7 +365,7 @@ var BitcoinTip = {
                 if (plural) {
                     tagline.append($('<span/>').text('x' + tipped.tipQTY));
                 }
-            });
+            }.bind(this));
         }.bind(this));
     },
 
