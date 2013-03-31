@@ -14,7 +14,9 @@ var RESUtils = {
     isMatchURL: function() {
         return true;
     },
-    addCSS: function() {}
+    addCSS: function(css) {
+        $(document.body).append($('<style/>').text(css));
+    }
 };
 
 var RESConsole = {
