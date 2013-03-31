@@ -223,6 +223,7 @@ modules['bitcoinTip'] = {
                         .before(this.separator()).prev()
                         .before($('<img/>').attr({
                             'src': this.icons.tipped,
+                            'class': 'tips-enabled-icon',
                             'style': 'vertical-align: text-bottom;',
                             'title': 'Tips enabled in this subreddit.'
                         }));
