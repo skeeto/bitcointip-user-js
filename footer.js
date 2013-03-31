@@ -6,7 +6,7 @@ if (!bitcoinTip.getAddress()) {
 bitcoinTip.go();
 
 /* Create the options panel. */
-if (location.pathname === '/r/skeeto/wiki/preferences') {
+if (location.pathname === '/r/bitcointip/wiki/preferences') {
     var $wiki = $('div.md.wiki');
     var $form = $('<form/>').attr({
         'class': 'tip-preferences roundfield'
@@ -87,7 +87,7 @@ if (location.pathname === '/r/skeeto/wiki/preferences') {
         //window.location.reload(true); // Just to provide feedback
     });
 
-    $wiki.append($form);
+    $wiki.empty().append($form);
 }
 
 
