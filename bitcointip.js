@@ -232,6 +232,7 @@ modules['bitcoinTip'] = {
         var user = RESUtils.loggedInUser();
         var address = this.getAddress(user);
         if (!address) return;
+        var bitcoinTip = this;
 
         $.getJSON(this.api.balance, {
             username: user,
@@ -241,15 +242,15 @@ modules['bitcoinTip'] = {
                 return; /* Probably have the address wrong! */
             }
             $('#header-bottom-right form.logout')
-                .before(this.separator()).prev()
+                .before(bitcoinTip.separator()).prev()
                 .before($('<a/>').attr({
                     'class': 'hover',
                     'href': '#'
                 }).click(function() {
-                    this.toggleCurrency();
-                    $(this).text(this.quantityString(balance));
-                }.bind(this)).text(this.quantityString(balance)));
-        }.bind(this));
+                    bitcoinTip.toggleCurrency();
+                    $(this).text(bitcoinTip.quantityString(balance));
+                }).text(bitcoinTip.quantityString(balance)));
+        });
     },
 
     fetchAddress: function fetchAddress(user, callback) {
