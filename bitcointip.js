@@ -98,6 +98,10 @@ modules['bitcoinTip'] = {
         var pref = this.options.currency.value.toUpperCase();
         var unit = this.currencies[pref];
         var amount = object['amount' + pref] || object['balance' + pref];
+        if (amount == null) {
+            amount = object['amountBTC'] || object['balanceBTC'];
+            unit = this.currencies['BTC'];
+        }
         return unit.unit + amount;
     },
 
