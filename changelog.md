@@ -1,3 +1,5 @@
+ * 2.0
+   * Refactor the entire script for RES
  * 1.5.2
    * Bug fix
  * 1.5.1
