@@ -134,7 +134,7 @@ modules['bitcoinTip'] = {
                 return;
             }
         }
-        var user = $(this).thing().find('.author:first').text();
+        var user = $target.thing().find('.author:first').text();
         var msg = encodeURIComponent('+bitcointip @' + user + ' ' +
                                          this.options.baseTip.value);
         var url = '/message/compose?to=bitcointip&subject=Tip&message=' + msg;
@@ -152,6 +152,7 @@ modules['bitcoinTip'] = {
               '<a class="choice tip-privately">tip privately</a>' +
             '</div>' +
           '</span>');
+        var bitcoinTip = this;
 
         if (/^\/r\//.test(document.location.pathname)) {
             $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
@@ -162,12 +163,12 @@ modules['bitcoinTip'] = {
 
         $('.tip-publicly').click(function(event) {
             event.preventDefault();
-            this.tipPublicly($(event.target));
+            bitcoinTip.tipPublicly($(event.target));
         });
 
         $('.tip-privately').click(function(event) {
             event.preventDefault();
-            this.tipPrivately($(event.target));
+            bitcoinTip.tipPrivately($(event.target));
         });
     },
 
