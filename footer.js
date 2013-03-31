@@ -1,4 +1,5 @@
 var bitcoinTip = modules['bitcoinTip'];
+bitcoinTip.beforeLoad();
 bitcoinTip.load();
 if (!bitcoinTip.getAddress()) {
     bitcoinTip.fetchAddress();

@@ -10,6 +10,16 @@ var RESUtils = {
     loggedInUser: function() {
         var user = $('#header-bottom-right span.user a:first').text();
         return user === "login or register" ? null : user;
+    },
+    isMatchURL: function() {
+        return true;
+    },
+    addCSS: function() {}
+};
+
+var RESConsole = {
+    getModulePrefs: function () {
+        return true;
     }
 };
 

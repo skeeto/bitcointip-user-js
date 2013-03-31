@@ -444,6 +444,10 @@ modules['bitcoinTip'] = {
 
     /** The main entry point. */
     go: function go() {
+        if (!(this.isEnabled()) && (this.isMatchURL())) {
+            return;
+        }
+
         /**
          * Set textarea cursor position in jQuery.
          */
