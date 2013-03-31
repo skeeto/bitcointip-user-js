@@ -12,3 +12,16 @@ var RESUtils = {
         return user === "login or register" ? null : user;
     }
 };
+
+var RESStorage = {
+    localStorage: (window.unsafeWindow || window).localStorage,
+    setItem: function(key, value) {
+        this.localStorage[key] = value;
+    },
+    getItem: function(key) {
+        var value = this.localStorage[key];
+        return value != null ? value : null;
+    }
+};
+
+var modules = {};

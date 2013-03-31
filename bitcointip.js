@@ -1,5 +1,4 @@
-var BitcoinTip = {
-
+modules['bitcoinTip'] = {
     /** Specifies how to find tips. */
     tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
     tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
@@ -201,7 +200,7 @@ var BitcoinTip = {
         var units = Object.keys(this.currencies);
         var i = (units.indexOf(this.options.currency.value) + 1) % units.length;
         this.options.currency.value = units[i];
-        // XXX save
+        this.save();
     },
 
     getAddress: function getAddress(user) {
@@ -225,7 +224,7 @@ var BitcoinTip = {
         if (user && !set) {
             this.options.address.value.push([user, address]);
         }
-        // XXX save
+        this.save();
         return address;
     },
 
@@ -253,8 +252,10 @@ var BitcoinTip = {
         }.bind(this));
     },
 
-    fetchAddress: function fetchAddress() {
-        var user = $(this).thing().find('.author:first').text();
+    fetchAddress: function fetchAddress(user, callback) {
+        user = user || RESUtils.loggedInUser();
+        callback = callback || function nop() {};
+        if (!user) return;
         $.getJSON('/message/messages.json', function(messages) {
             /* Search messages for a bitcointip response. */
             var address = messages.data.children.filter(function (message) {
@@ -270,11 +271,11 @@ var BitcoinTip = {
             }).filter(function(x) { return x; })[0]; // Use the most recent
             if (address) {
                 this.setAddress(user, address);
-                return address;
+                callback(address);
             } else {
-                return null;
+                callback(null);
             }
-        });
+        }.bind(this));
     },
 
     /** Find all things matching a regex. */
@@ -380,6 +381,18 @@ var BitcoinTip = {
             }
             $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
         });
+    },
+
+    save: function save() {
+        var json = JSON.stringify(this.options);
+        RESStorage.setItem('RESoptions.bitcoinTip', json);
+    },
+
+    load: function load() {
+        var json = RESStorage.getItem('RESoptions.bitcoinTip');
+        if (json) {
+            this.options = JSON.parse(json);
+        }
     },
 
     /** The main entry point. */

@@ -1,4 +1,9 @@
-BitcoinTip.go();
+var bitcoinTip = modules['bitcoinTip'];
+bitcoinTip.load();
+if (!bitcoinTip.getAddress()) {
+    bitcoinTip.fetchAddress();
+}
+bitcoinTip.go();
 
 /* ## Test Tips
  *
