@@ -500,8 +500,8 @@ modules['bitcoinTip'] = {
             var tips = this.getTips(this.tipregex);
             var fun = this.getTips(this.tipregexFun);
             var all = $.extend({}, tips, fun);
-            this.attachTipStatuses(all);
             if (Object.keys(all).length > 0) {
+                this.attachTipStatuses(all);
                 this.attachReceiverStatus(this.getTips(/(?:)/));
             }
         }
