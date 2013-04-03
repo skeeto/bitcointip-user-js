@@ -448,7 +448,7 @@ modules['bitcoinTip'] = {
 
     /** The main entry point. */
     go: function go() {
-        if (!(this.isEnabled()) && (this.isMatchURL())) {
+        if (!this.isEnabled() || !this.isMatchURL()) {
             return;
         }
 
