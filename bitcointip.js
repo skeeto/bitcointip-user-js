@@ -65,7 +65,7 @@ modules['bitcoinTip'] = {
             type: 'text',
             value: '0.01 BTC',
             description: 'Default tip amount in the form of ' +
-                '"[value] [units", e.g. "0.01 BTC"'
+                '"[value] [units]", e.g. "0.01 BTC"'
         },
         attachButtons: {
             name: 'Add "tip bitcoins" Button',
