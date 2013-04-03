@@ -52,11 +52,13 @@ modules['bitcoinTip'] = {
 
     /** Specifies how to display different currencies. */
     currencies: {
-        USD: {unit: '$', precision: 2},
+        USD: {unit: 'US$', precision: 2},
         BTC: {unit: '฿'},
         JPY: {unit: '¥'},
         GBP: {unit: '£', precision: 2},
-        EUR: {unit: '€', precision: 2}
+        EUR: {unit: '€', precision: 2},
+        AUD: {unit: 'A$', precision: 2},
+        CAD: {unit: 'C$', precision: 2}
     },
 
     options: {
