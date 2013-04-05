@@ -287,12 +287,12 @@ modules['bitcoinTip'] = {
                '</div>');
          $(document.body).append(this.tipMenu);
 
-        $('.tip-publicly').click(function(event) {
+        this.tipMenu.find('.tip-publicly').click(function(event) {
             event.preventDefault();
             modules['bitcoinTip'].tipPublicly($(modules['bitcoinTip'].lastToggle));
         });
 
-        $('.tip-privately').click(function(event) {
+        this.tipMenu.find('.tip-privately').click(function(event) {
             event.preventDefault();
             modules['bitcoinTip'].tipPrivately($(modules['bitcoinTip'].lastToggle));
         });
