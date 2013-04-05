@@ -440,14 +440,22 @@ modules['bitcoinTip'] = {
         }.bind(this));
     },
 
+    injectBotStatus: function injectBotStatus() {
+        $.getJSON(this.api.gettips, function(response) {
+            var lastEvaluated = new Date(response.last_evaluated * 1000);
+            var botStatus = null;
+            if (Date.now() - lastEvaluated > this.botDownThreshold) {
+                botStatus = '<span class="status-down">DOWN</span>';
+            } else {
+                botStatus = '<span class="status-up">UP</span>';
+            }
+            $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
+        });
+    },
 
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
-            var botStatusHtml = {
-                up: '<span class="status-up">UP</span>',
-                down: '<span class="status-down">DOWN</span>'
-            };
 
             // var $ = unsafeWindow.$,
             //     S = unsafeWindow.localStorage,
