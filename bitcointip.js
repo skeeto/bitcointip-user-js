@@ -202,8 +202,6 @@ modules['bitcoinTip'] = {
         });
 
         if (/^\/r\//.test(document.location.pathname)) {
-            // this operation should be chunked. On monster comment pages, it will lock UI hard. if we use the old code, which is:
-            // $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
             var allGiveGoldLinks = document.body.querySelectorAll('a.give-gold');
             RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
                 $(giveGold).parent().after($('<li/>').append(tip.clone(true)));
@@ -295,7 +293,6 @@ modules['bitcoinTip'] = {
         this.save();
         return address;
     },
-
 
     attachBalance: function attachBalance() {
         var user = RESUtils.loggedInUser();
@@ -543,4 +540,4 @@ modules['bitcoinTip'] = {
         $(tipMenu).toggle();
         modules['bitcoinTip'].lastToggle = ele;
     }
-}; // note: you NEED this semicolon at the end!
+};
