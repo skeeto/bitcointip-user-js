@@ -127,13 +127,8 @@ modules['bitcoinTip'] = {
         }
 
         if (this.options.status.value !== 'none') {
-            var tips = this.getTips(this.tipregex);
-            var fun = this.getTips(this.tipregexFun);
-            var all = $.extend({}, tips, fun);
-            if (Object.keys(all).length > 0) {
-                this.attachTipStatuses(all);
-                this.attachReceiverStatus(this.getTips(/(?:)/));
-            }
+            this.scanForTips();
+            RESUtils.watchForElement('newComments', this.scanForTips.bind(this));
         }
 
         if (RESUtils.currentSubreddit() === 'bitcointip') {
@@ -440,10 +435,27 @@ modules['bitcoinTip'] = {
         }.bind(this));
     },
 
+    scanForTips: function(ele) {
+        ele = ele || document.body;
+        var tips = this.getTips(this.tipregex, ele);
+        var fun = this.getTips(this.tipregexFun, ele);
+        var all = $.extend({}, tips, fun);
+        if (Object.keys(all).length > 0) {
+            this.attachTipStatuses(all);
+            this.attachReceiverStatus(this.getTips(/(?:)/, ele));
+        }
+    },
+
     /** Find all things matching a regex. */
-    getTips: function getComments(regex) {
+    getTips: function getComments(regex, ele) {
         var tips = {};
-        $('div.comment, div.self, div.link').each(function() {
+        var items = $(ele);
+        if (items.is('.entry')) {
+            items = items.closest('div.comment, div.self, div.link');
+        } else {
+            items = items.find('div.comment, div.self, div.link');
+        }
+        items.each(function() {
             var $this = $(this);
             var match = $this.find('.md:first, .title:first')
                     .children().is(function() {
