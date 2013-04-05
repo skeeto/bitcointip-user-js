@@ -9,6 +9,23 @@ modules['bitcoinTip'] = {
         'For more information, visit <a href="/r/bitcointip" ' +
         'target="_blank">/r/bitcointip</a>  or <a href="/13iykn" ' +
         'target="_blank">read the documentation</a>.',
+    isEnabled: function() {
+        return RESConsole.getModulePrefs(this.moduleID);
+    },
+    include: Array(
+            /https?:\/\/([a-z]+).reddit.com\/[\?]*/i
+    ),
+    exclude: Array(
+            /https?:\/\/([a-z]+).reddit.com\/[\?]*\/user\/bitcointip\/?/i
+    ),
+    isMatchURL: function() {
+        return RESUtils.isMatchURL(this.moduleID);
+    },
+    beforeLoad: function() {
+        RESUtils.addCSS('.tip-bitcoins { cursor: pointer; }');
+        RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
+        RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
+    },
     options: {
         baseTip: {
             type: 'text',
@@ -45,23 +62,6 @@ modules['bitcoinTip'] = {
             value: true,
             description: 'Display enabled subreddits'
         }
-    },
-    isEnabled: function() {
-        return RESConsole.getModulePrefs(this.moduleID);
-    },
-    include: Array(
-        /https?:\/\/([a-z]+).reddit.com\/[\?]*/i
-    ),
-    exclude: Array(
-        /https?:\/\/([a-z]+).reddit.com\/[\?]*\/user\/bitcointip\/?/i
-    ),
-    isMatchURL: function() {
-        return RESUtils.isMatchURL(this.moduleID);
-    },
-    beforeLoad: function() {
-        RESUtils.addCSS('.tip-bitcoins { cursor: pointer; }');
-        RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
-        RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
     },
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
