@@ -16,6 +16,21 @@ var RESUtils = {
     },
     addCSS: function(css) {
         $(document.body).append($('<style/>').text(css));
+    },
+    setCursorPosition: function(forms, pos) {
+        forms = $(forms);
+        forms.each(function(index, elem) {
+            if (elem.setSelectionRange) {
+                elem.setSelectionRange(pos, pos);
+            } else if (elem.createTextRange) {
+                var range = elem.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', pos);
+                range.moveStart('character', pos);
+                range.select();
+            }
+        });
+        return this;
     }
 };
 

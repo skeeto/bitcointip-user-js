@@ -160,24 +160,6 @@ modules['bitcoinTip'] = {
     },
 
     addjQueryUtilities: function() {
-        /**
-         * Set textarea cursor position in jQuery.
-         */
-        $.fn.setCursorPosition = function(pos) {
-            this.each(function(index, elem) {
-                if (elem.setSelectionRange) {
-                    elem.setSelectionRange(pos, pos);
-                } else if (elem.createTextRange) {
-                    var range = elem.createTextRange();
-                    range.collapse(true);
-                    range.moveEnd('character', pos);
-                    range.moveStart('character', pos);
-                    range.select();
-                }
-            });
-            return this;
-        };
-
         /** Find the thing for this element. */
         $.fn.thing = function() {
             return this.closest('.thing');
@@ -252,7 +234,7 @@ modules['bitcoinTip'] = {
         if (!textarea.val().match(this.tipregex)) {
             textarea.val(textarea.val() + '\n\n+bitcointip ' +
                          this.options.baseTip.value);
-            textarea.setCursorPosition(0);
+            RESUtils.setCursorPosition(textarea, 0);
         }
     },
 
