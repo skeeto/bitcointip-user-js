@@ -109,7 +109,7 @@ modules['bitcoinTip'] = {
 
         if (this.options.attachButtons.value) {
             this.attachTipButtons();
-            RESUtils.watchForElement('newComments', modules['bitcoinTip'].attachTipButtons);
+            RESUtils.watchForElement('newComments', modules['bitcoinTip'].attachTipButtons.bind(this));
             this.attachTipMenu();
         }
 
@@ -119,7 +119,7 @@ modules['bitcoinTip'] = {
 
         if (this.options.hide.value) {
             this.hideVerifications();
-            RESUtils.watchForElement('newComments', modules['bitcoinTip'].hideVerifications);
+            RESUtils.watchForElement('newComments', modules['bitcoinTip'].hideVerifications.bind(this));
         }
 
         if (this.options.balance.value) {
@@ -247,8 +247,7 @@ modules['bitcoinTip'] = {
 
     attachTipButtons: function attachTipButtons(ele) {      
         ele = ele || document.body;
-        var module = modules['bitcoinTip'];
-        
+        var module = this;
         if (!module.tipButton) {
             module.tipButton = $(
                 '<span class="tip-wrapper">' +
