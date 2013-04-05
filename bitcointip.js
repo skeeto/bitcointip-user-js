@@ -305,14 +305,14 @@ modules['bitcoinTip'] = {
         var thisXY = $(ele).offset();
         var thisHeight = $(ele).height();
         // if already visible and we've clicked a different trigger, hide first, then show after the move.
-        if (($(tipMenu).is(':visible')) && (modules['bitcoinTip'].lastToggle !== ele)) {
-            $(tipMenu).toggle();
+        if ((tipMenu.is(':visible')) && (modules['bitcoinTip'].lastToggle !== ele)) {
+            tipMenu.hide();
         }
-        $(tipMenu).css({
+        tipMenu.css({
             top: (thisXY.top+thisHeight)+'px',
             left: thisXY.left+'px'
         });
-        $(tipMenu).toggle();
+        tipMenu.toggle();
         modules['bitcoinTip'].lastToggle = ele;
     },
 
