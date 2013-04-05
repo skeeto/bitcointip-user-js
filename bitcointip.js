@@ -493,141 +493,39 @@ modules['bitcoinTip'] = {
             return this.closest('.thing');
         };
 
+        if (this.options.status.value === 'basic') {
+            this.icons.pending = this.icons.completed;
+            this.icons.reversed = this.icons.completed;
+        }
 
+        if (this.options.attachButtons.value) {
+            this.attachTipButtons();
+        }
 
-            /* Balance indicator. */
-            var user = $('#header-bottom-right span.user a').first().text();
-            if (user === "login or register") {
-                user = null;
+        if (this.options.subreddit.value) {
+            this.attachSubredditIndicator();
+        }
+
+        if (this.options.hide.value) {
+            this.hideVerifications();
+        }
+
+        if (this.options.balance.value) {
+            this.attachBalance();
+        }
+
+        if (this.options.status.value !== 'none') {
+            var tips = this.getTips(this.tipregex);
+            var fun = this.getTips(this.tipregexFun);
+            var all = $.extend({}, tips, fun);
+            if (Object.keys(all).length > 0) {
+                this.attachTipStatuses(all);
+                this.attachReceiverStatus(this.getTips(/(?:)/));
             }
-            // TODO: replace S[] whatever with RESStorage
-            // var address = S['address.' + user];
-            var address = null;
-            if (!this.options.balanceUnits) this.options.balanceUnits = {};
-            if (this.options.balanceUnits.value == null) {
-                this.options.balanceUnits.value = 'balanceUSD';
-            }
+        }
 
-            function currencyString(balance) {
-                var balanceUnits = modules['bitcoinTip'].options.balanceUnits.value;
-                var meta = displayCurrency[balanceUnits];
-                var quantity = balance[balanceUnits];
-                if (meta.precision) {
-                    quantity = quantity.toFixed(meta.precision);
-                }
-                return meta.unit + quantity;
-            }
-
-            if (this.options.balance.value && user != null && address == null) {
-                ...
-            } else if (this.options.balance.value && user != null && address != null) {
-                ...();
-            }
-
-            /* Reddit jQuery plugin. */
-            // passing in jquery is unnecessary here - we already have access to it.
-            // (function($) {
-                /** Get the comment div for each element in the current set. */
-                $.fn.comment = function() {
-                    return this.closest('.comment');
-                };
-
-                /** Get the comment ID for the first selected comment. */
-                $.fn.commentID = function() {
-                    var full = this.first().find('input[name="thing_id"]').first().val();
-                    return full.replace(/^t1_/, '');
-                };
-
-                /** Get the commenter/poster name for the first selected comment. */
-                $.fn.thingName = function() {
-                    return this.first().find('.author').first().text();
-                };
-
-                /** Get the comment's post time for the first selected comment. */
-                $.fn.commentDate = function() {
-                    return new Date(this.find('.tagline time').first().attr('datetime'));
-                };
-
-                /** Get the comment body for the first comment in the current set. */
-                $.fn.commentBody = function() {
-                    return this.find('.md').first();
-                };
-
-                /** Get the children comments for each comment in the current set. */
-                $.fn.commentChildren = function() {
-                    return this.find('.comment');
-                };
-
-                /** Get the parent comment for each comment in the current set. */
-                $.fn.commentParent = function() {
-                    return this.parent().comment();
-                };
-
-                /** Determine whether the first element is the target comment. */
-                $.fn.isTarget = function() {
-                    return this.first().find('form').first().hasClass('border');
-                };
-
-                /** Return true if the first comment in the current set has a "fun" tip. */
-                $.fn.hasFunTip = function() {
-                    return this.commentBody().children().is(function() {
-                        return tipregexFun.test($(this).text());
-                    });
-                };
-
-                /** Return true if the first seleted item is a comment. */
-                $.fn.isComment = function() {
-                    return this.closest('.link').length === 0;
-                };
-            // })(unsafeWindow.jQuery);
-
-            /* Find all the tip comments. */
-            var tips = {};
-            var fun = {};
-            $('div.comment').each(function() {
-                var $this = $(this);
-                if ($this.hasTip()) {
-                    tips[$this.commentID()] = $this;
-                } else if ($this.hasFunTip()) {
-                    tips[$this.commentID()] = $this;
-                    fun[$this.commentID()] = $this;
-                }
-            });
-
-            /* Get status information about various tips. */
-            var inTipSubreddit = /^\/r\/bitcointip/.test(document.location.pathname);
-            var tipIDs = Object.keys(tips);
-            var confirmedIDs = [];
-            if (this.options.status.value !== 'none' && (tipIDs.length > 0 || inTipSubreddit)) {
-                ...
-
-                /* Put receiver information on comments. */
-                ...
-                var thingIDs = Object.keys(things);
-                ...
-            }
-
-            /* Test URLs:
-             *
-             * Rejected,
-             *   http://www.reddit.com/r/bitcointip/comments/132nhq/t/c7c7iue
-             *
-             * Rejected flip,
-             *   http://www.reddit.com/r/Bitcoin/comments/14i9e7/y/c7dc6w9
-             *
-             * Combination folding,
-             *   http://www.reddit.com/r/bitcointip/comments/13iykn/b/c7dj8ia
-             *
-             * Multiple tips to one receiver,
-             *   http://www.reddit.com/r/bitcointip/comments/12lmut/c7ny177
-             *
-             * Multiple guilded to one receiver (for comparison),
-             *   http://www.reddit.com/r/AdviceAnimals/comments/15mk25/c7ntrcc
-             *
-             * Reversed,
-             *   http://www.reddit.com/r/IAmA/comments/18tp7t/c8i8qto
-             */
-
+        if (RESUtils.currentSubreddit() === 'bitcointip') {
+            this.injectBotStatus();
         }
     },
     toggleTipMenu: function(ele) {
