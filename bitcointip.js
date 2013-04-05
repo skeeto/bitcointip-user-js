@@ -290,12 +290,12 @@ modules['bitcoinTip'] = {
 
         $('.tip-publicly').click(function(event) {
             event.preventDefault();
-            bitcoinTip.tipPublicly($(event.target));
+            modules['bitcoinTip'].tipPublicly($(modules['bitcoinTip'].lastToggle));
         });
 
         $('.tip-privately').click(function(event) {
             event.preventDefault();
-            bitcoinTip.tipPrivately($(event.target));
+            modules['bitcoinTip'].tipPrivately($(modules['bitcoinTip'].lastToggle));
         });
     },
 
