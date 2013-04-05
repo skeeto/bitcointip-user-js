@@ -403,6 +403,44 @@ modules['bitcoinTip'] = {
         }.bind(this));
     },
 
+    attachReceiverStatus: function attachReceiverStatus(things) {
+        var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
+        var icons = this.icons;
+        var thingIDs = Object.keys(things);
+        $.getJSON(this.api.gettipped, {
+            tipped: thingIDs.toString()
+        }, function(response) {
+            response.forEach(function (tipped) {
+                var id = tipped.fullname.replace(/^t._/, '');
+                var thing = things[id];
+                var tagline = thing.find('.tagline').first();
+                var plural = tipped.tipQTY > 1;
+                var title = this.quantityString(tipped) + ' to ' +
+                        thing.find('.author:first').text() + ' for this ';
+                if (plural) {
+                    title = 'redditors have given ' + title;
+                } else {
+                    title = 'a redditor has given ' + title;
+                }
+                if (thing.closest('.link').length === 0) {
+                    title += 'comment.';
+                } else {
+                    title += 'submission.';
+                }
+                var icon = $('<img/>').attr({
+                    src: icons.tipped,
+                    style: iconStyle,
+                    title: title
+                });
+                tagline.append(icon);
+                if (plural) {
+                    tagline.append($('<span/>').text('x' + tipped.tipQTY));
+                }
+            }.bind(this));
+        }.bind(this));
+    },
+
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -549,51 +587,7 @@ modules['bitcoinTip'] = {
                 /* Put receiver information on comments. */
                 ...
                 var thingIDs = Object.keys(things);
-                $.getJSON(api.gettipped + 'tipped=' + thingIDs, function(response) {
-                    response.forEach(function (tipped) {
-                        var id = tipped.fullname.replace(/^t._/, '');
-                        var thing = things[id];
-                        var tagline = thing.find('.tagline').first();
-                        var plural = tipped.tipQTY > 1;
-                        var title = ...(tipped) + ' to ' + thing.thingName() +
-                                ' for this ';
-                        if (plural) {
-                            title = 'redditors have given ' + title;
-                        } else {
-                            title = 'a redditor has given ' + title;
-                        }
-                        if (thing.isComment()) {
-                            title += 'comment.';
-                        } else {
-                            title += 'submission.';
-                        }
-                        var icon = $('<img/>').attr({
-                            src: modules['bitcoinTip'].icons.tipped,
-                            style: iconStyle,
-                            title: title
-                        });
-
-                        /* Attempt to link to the first tip. */
-                        var foundParent = false;
-                        thing.commentChildren().each(function() {
-                            if (!foundParent) {
-                                var $this = $(this);
-                                var id = $this.commentID();
-                                if ($.inArray(id, confirmedIDs) >= 0) {
-                                    icon = $('<a/>').attr({
-                                        href: '#t1_' + $this.commentID()
-                                    }).append(icon);
-                                    foundParent = true;
-                                }
-                            }
-                        });
-
-                        tagline.append(icon);
-                        if (plural) {
-                            tagline.append($('<span/>').text('x' + tipped.tipQTY));
-                        }
-                    });
-                });
+                ...
             }
 
             /* Test URLs:
