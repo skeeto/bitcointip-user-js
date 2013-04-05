@@ -234,7 +234,7 @@ modules['bitcoinTip'] = {
         if ($target.closest('.link').length > 0) { /* Post */
             form = $('.commentarea .usertext:first');
         } else {
-            form = $target.closest('.thing');.find(".child .usertext:first");
+            form = $target.closest('.thing').find(".child .usertext:first");
         }
         if (form.length > 0 && form.find('textarea').val()) {
             /* Confirm if a comment has been entered. */
