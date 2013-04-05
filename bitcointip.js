@@ -111,6 +111,7 @@ modules['bitcoinTip'] = {
 
         if (this.options.attachButtons.value) {
             this.attachTipButtons();
+            this.attachTipMenu();
         }
 
         if (this.options.subreddit.value) {
