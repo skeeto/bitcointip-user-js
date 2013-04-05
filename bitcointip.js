@@ -347,7 +347,7 @@ modules['bitcoinTip'] = {
             }
         }.bind(this));
     },
-    
+
     /** Find all things matching a regex. */
     getTips: function getComments(regex) {
         var tips = {};
@@ -363,6 +363,44 @@ modules['bitcoinTip'] = {
             }
         });
         return tips;
+    },
+
+    attachTipStatuses: function attachTipStatuses(tips) {
+        var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
+        var icons = this.icons;
+        var tipIDs = Object.keys(tips);
+        $.getJSON(this.api.gettips, {
+            tips: tipIDs.toString()
+        }, function(response) {
+            var lastEvaluated = new Date(response.last_evaluated * 1000);
+            response.tips.forEach(function (tip) {
+                var id = tip.fullname.replace(/^t._/, '');
+                var tagline = tips[id].find('.tagline').first();
+                var icon = $('<a/>').attr({href: tip.tx, target: '_blank'});
+                tagline.append(icon.append($('<img/>').attr({
+                    src: icons[tip.status],
+                    style: iconStyle,
+                    title: this.quantityString(tip) + ' → ' + tip.receiver +
+                        ' (' + tip.status + ')'
+                })));
+                tips[id].attr('id', 't1_' + id); // for later linking
+                delete tips[id];
+            }.bind(this));
+
+            /* Deal with unanswered tips. */
+            for (var id in tips) {
+                var date = tips[id].find('.tagline time:first')
+                        .attr('datetime');
+                if (new Date(date) < lastEvaluated) {
+                    var tagline = tips[id].find('.tagline:first');
+                    tagline.append($('<img/>').attr({
+                        src: icons.cancelled,
+                        style: iconStyle,
+                        title: 'This tip is invalid.'
+                    }));
+                }
+            }
+        }.bind(this));
     },
 
     go: function() {
@@ -506,46 +544,7 @@ modules['bitcoinTip'] = {
             var tipIDs = Object.keys(tips);
             var confirmedIDs = [];
             if (this.options.status.value !== 'none' && (tipIDs.length > 0 || inTipSubreddit)) {
-                var iconStyle = 'vertical-align: text-bottom; margin-left: 8px;';
-                $.getJSON(api.gettips + 'tips=' + tipIDs, function(response) {
-                    var lastEvaluated = new Date(response.last_evaluated * 1000);
-                    if (inTipSubreddit) {
-                        var botStatus = null;
-                        if (Date.now() - lastEvaluated > botDownThreshold) {
-                            botStatus = botStatusHtml.down;
-                        } else {
-                            botStatus = botStatusHtml.up;
-                        }
-                        $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
-                    }
-
-                    response.tips.forEach(function (tip) {
-                        var id = tip.fullname.replace(/^t._/, '');
-                        var tagline = tips[id].find('.tagline').first();
-                        var icon = $('<a/>').attr({href: tip.tx, target: '_blank'});
-                        tagline.append(icon.append($('<img/>').attr({
-                            src: modules['bitcoinTip'].icons[tip.status],
-                            style: iconStyle,
-                            title: ...(tip) + ' → ' + tip.receiver +
-                                ' (' + tip.status + ')'
-                        })));
-                        confirmedIDs.push(id);
-                        tips[id].attr('id', 't1_' + id);
-                        delete tips[id];
-                    });
-
-                    /* Deal with unanswered tips. */
-                    for (var id in tips) {
-                        if (!fun[id] && tips[id].commentDate() < lastEvaluated) {
-                            var tagline = tips[id].find('.tagline').first();
-                            tagline.append($('<img/>').attr({
-                                src: modules['bitcoinTip'].icons.cancelled,
-                                style: iconStyle,
-                                title: 'This tip is invalid.'
-                            }));
-                        }
-                    }
-                });
+                ...
 
                 /* Put receiver information on comments. */
                 ...
