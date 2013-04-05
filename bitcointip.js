@@ -3,6 +3,12 @@ modules['bitcoinTip'] = {
     moduleID: 'bitcoinTip',
     moduleName: 'bitcoinTip',
     category: 'Users',
+    description: 'Send <a href="http://bitcoin.org/" target="_blank">' +
+        'bitcoin</a> to other redditors  via <a href="/r/bitcointip" ' +
+        'target="_blank">bitcointip</a>. <br><br>' +
+        'For more information, visit <a href="/r/bitcointip" ' +
+        'target="_blank">/r/bitcointip</a>  or <a href="/13iykn" ' +
+        'target="_blank">read the documentation</a>.',
     options: {
         baseTip: {
             type: 'text',
@@ -40,9 +46,6 @@ modules['bitcoinTip'] = {
             description: 'Display enabled subreddits'
         }
     },
-    description: 'Send <a href="http://bitcoin.org/" target="_blank">bitcoin</a> to other redditors  via <a href="/r/bitcointip" target="_blank">bitcointip</a>.' +
-        '<br><br>'+
-        'For more information, visit <a href="/r/bitcointip" target="_blank">/r/bitcointip</a>  or <a href="/13iykn" target="_blank">read the documentation</a>.',
     isEnabled: function() {
         return RESConsole.getModulePrefs(this.moduleID);
     },
