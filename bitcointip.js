@@ -314,6 +314,23 @@ modules['bitcoinTip'] = {
         });
     },
 
+
+    toggleTipMenu: function(ele) {
+        var tipMenu = modules['bitcoinTip'].tipMenu;
+        var thisXY = $(ele).offset();
+        var thisHeight = $(ele).height();
+        // if already visible and we've clicked a different trigger, hide first, then show after the move.
+        if (($(tipMenu).is(':visible')) && (modules['bitcoinTip'].lastToggle !== ele)) {
+            $(tipMenu).toggle();
+        }
+        $(tipMenu).css({
+            top: (thisXY.top+thisHeight)+'px',
+            left: thisXY.left+'px'
+        });
+        $(tipMenu).toggle();
+        modules['bitcoinTip'].lastToggle = ele;
+    },
+
     attachSubredditIndicator: function() {
         var subreddit = RESUtils.currentSubreddit();
         if (subreddit) {
@@ -529,21 +546,5 @@ modules['bitcoinTip'] = {
             }
             $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
         });
-    },
-
-    toggleTipMenu: function(ele) {
-        var tipMenu = modules['bitcoinTip'].tipMenu;
-        var thisXY = $(ele).offset();
-        var thisHeight = $(ele).height();
-        // if already visible and we've clicked a different trigger, hide first, then show after the move.
-        if (($(tipMenu).is(':visible')) && (modules['bitcoinTip'].lastToggle !== ele)) {
-            $(tipMenu).toggle();
-        }
-        $(tipMenu).css({
-            top: (thisXY.top+thisHeight)+'px',
-            left: thisXY.left+'px'
-        });
-        $(tipMenu).toggle();
-        modules['bitcoinTip'].lastToggle = ele;
     }
 };
