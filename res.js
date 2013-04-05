@@ -40,6 +40,7 @@ var RESUtils = {
         }
         window.setTimeout(doChunk, delay);
     },
+    watchForElement: function() { /* stub */ },
     setCursorPosition: function(form, pos) {
         elem = $(form)[0];
         if (!elem) return;
