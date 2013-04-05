@@ -347,6 +347,23 @@ modules['bitcoinTip'] = {
             }
         }.bind(this));
     },
+    
+    /** Find all things matching a regex. */
+    getTips: function getComments(regex) {
+        var tips = {};
+        $('div.comment, div.self, div.link').each(function() {
+            var $this = $(this);
+            var match = $this.find('.md:first, .title:first')
+                    .children().is(function() {
+                        return regex.test($(this).text());
+                    });
+            if (match) {
+                var id = $this.attr('data-fullname');
+                tips[id.replace(/^t._/, '')] = $this;
+            }
+        });
+        return tips;
+    },
 
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
@@ -458,23 +475,11 @@ modules['bitcoinTip'] = {
                     return this.first().find('form').first().hasClass('border');
                 };
 
-                /** Return true if the first comment in the current set has a tip. */
-                $.fn.hasTip = function() {
-                    return this.commentBody().children().is(function() {
-                        return tipregex.test($(this).text());
-                    });
-                };
-
                 /** Return true if the first comment in the current set has a "fun" tip. */
                 $.fn.hasFunTip = function() {
                     return this.commentBody().children().is(function() {
                         return tipregexFun.test($(this).text());
                     });
-                };
-
-                /** Return the link ID for the first post in the selection. */
-                $.fn.postID = function() {
-                    return this.attr('data-fullname').replace(/^t._/, '');
                 };
 
                 /** Return true if the first seleted item is a comment. */
@@ -543,15 +548,7 @@ modules['bitcoinTip'] = {
                 });
 
                 /* Put receiver information on comments. */
-                var things = {};
-                $('div.comment').each(function() {
-                    var $this = $(this);
-                    things[$this.commentID()] = $this;
-                });
-                $('div.link').each(function() {
-                    var $this = $(this);
-                    things[$this.postID()] = $this;
-                });
+                ...
                 var thingIDs = Object.keys(things);
                 $.getJSON(api.gettipped + 'tipped=' + thingIDs, function(response) {
                     response.forEach(function (tipped) {
