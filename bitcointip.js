@@ -264,6 +264,14 @@ modules['bitcoinTip'] = {
         });
     },
 
+    toggleCurrency: function() {
+        var units = Object.keys(this.currencies);
+        var i = (units.indexOf(this.options.currency.value) + 1) % units.length;
+        this.options.currency.value = units[i];
+        this.save();
+    },
+
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -314,13 +322,6 @@ modules['bitcoinTip'] = {
                 this.options.balanceUnits.value = 'balanceUSD';
             }
 
-            function toggleBalanceUnits() {
-                var units = Object.keys(displayCurrency);
-                var i = (units.indexOf(modules['bitcoinTip'].options.balanceUnits.value) + 1) % units.length;
-                modules['bitcoinTip'].options.balanceUnits.value = units[i];
-                return modules['bitcoinTip'].options.balanceUnits.value;
-            }
-
             function currencyString(balance) {
                 var balanceUnits = modules['bitcoinTip'].options.balanceUnits.value;
                 var meta = displayCurrency[balanceUnits];
@@ -347,7 +348,7 @@ modules['bitcoinTip'] = {
                         'class': 'hover',
                         'href': '#'
                     }).bind('click', function() {
-                        toggleBalanceUnits();
+                        ...();
                         $(this).text(currencyString(balance));
                     }).text(currencyString(balance)));
                 });
