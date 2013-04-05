@@ -533,7 +533,7 @@ modules['bitcoinTip'] = {
             } else {
                 botStatus = '<span class="status-up">UP</span>';
             }
-            $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
+            $('.side a[href="http://bitcointip.net/status.php"]').html(botStatus);
         });
     }
 };
