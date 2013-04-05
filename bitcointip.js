@@ -9,102 +9,6 @@ modules['bitcoinTip'] = {
         'For more information, visit <a href="/r/bitcointip" ' +
         'target="_blank">/r/bitcointip</a>  or <a href="/13iykn" ' +
         'target="_blank">read the documentation</a>.',
-    isEnabled: function() {
-        return RESConsole.getModulePrefs(this.moduleID);
-    },
-    include: Array(
-            /https?:\/\/([a-z]+).reddit.com\/[\?]*/i
-    ),
-    exclude: Array(
-            /https?:\/\/([a-z]+).reddit.com\/[\?]*\/user\/bitcointip\/?/i
-    ),
-    isMatchURL: function() {
-        return RESUtils.isMatchURL(this.moduleID);
-    },
-    beforeLoad: function() {
-        RESUtils.addCSS('.tip-bitcoins { cursor: pointer; }');
-        RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
-        RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
-    },
-
-    go: function() {        
-        if (!this.isEnabled() || !this.isMatchURL()) {
-            return;
-        }
-
-        this.addjQueryUtilities();
-
-        if (this.options.status.value === 'basic') {
-            this.icons.pending = this.icons.completed;
-            this.icons.reversed = this.icons.completed;
-        }
-
-        if (this.options.attachButtons.value) {
-            this.attachTipButtons();
-        }
-
-        if (this.options.subreddit.value) {
-            this.attachSubredditIndicator();
-        }
-
-        if (this.options.hide.value) {
-            this.hideVerifications();
-        }
-
-        if (this.options.balance.value) {
-            this.attachBalance();
-        }
-
-        if (this.options.status.value !== 'none') {
-            var tips = this.getTips(this.tipregex);
-            var fun = this.getTips(this.tipregexFun);
-            var all = $.extend({}, tips, fun);
-            if (Object.keys(all).length > 0) {
-                this.attachTipStatuses(all);
-                this.attachReceiverStatus(this.getTips(/(?:)/));
-            }
-        }
-
-        if (RESUtils.currentSubreddit() === 'bitcointip') {
-            this.injectBotStatus();
-        }
-    },
-    
-    /** Specifies how to find tips. */
-    tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
-    tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
-
-    /** How many milliseconds until the bot is considered down. */
-    botDownThreshold: 15 * 60 * 1000,
-
-    /** Bitcointip API endpoints. */
-    api: {
-        gettips: 'https://bitcointip.net/api/gettips.php',
-        gettipped: 'https://bitcointip.net/api/gettipped.php',
-        subreddits: 'https://bitcointip.net/api/subreddits.php',
-        balance: 'https://bitcointip.net/api/balance.php'
-    },
-
-    /** Encoded tipping icons. */
-    icons: {
-        completed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAt1BMVEX///8AAAAAyAAAuwAAwQcAvAcAvwAAwQYAyAUAxAUAxwQAwgQAvAMAxQYAvwYAxQYAxwU5yT060j460j871T89wUE9wkFGokdGu0hIzExJl09JmE9JxExJxE1K1U9K1k5Ll09LmVNMmVNM2FBNmlRRx1NSzlRTqlVUslZU1ldVq1hVrFdV2FhWrFhX21pZqlphrWJh3WRotGtrqm1stW91sXd2t3h5t3urz6zA2sHA28HG3sf4+PhvgZhQAAAAEXRSTlMAARweJSYoLTM0O0dMU1dYbkVIv+oAAACKSURBVHjaVc7XEoIwEIXhFRED1tBUxBaPFSyxK3n/5zIBb/yv9pudnVky2Ywxm345MHkVXByllPm4W24qrLbzdo1sLPPRepc+XlnSIAuz9DQYPtXnkLhUF/ysrndV3CYLRpbg2VtpxFMwfRfEl8IghEPUhB9t9lEQoke6FnzONfpU5kEIoKOn/z+/pREPWTic38sAAAAASUVORK5CYII=",
-        cancelled: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAQlBMVEX///+qAAAAAAC/AADIABSaTU3YMDDcPj7cSEjeUFDiZGTld3fmfHzoiorqkJDqlpbupKTuqqr99fX99/f+/Pz////kWqLlAAAABXRSTlMAAwcIM6KYVMQAAABfSURBVHjaXc7JDsAgCEVRsYpIBzro//9qHyHpond3AgkklIuXPKJcqleIIEB6FwEhQEW0t4rlUtt+22ZTMQ09NqZyiK8BtBCvc9iDWegY526hBVRmdcQ9RgD9f/G+P1+JEwRF2vKhRgAAAABJRU5ErkJggg==",
-        tipped: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAANCAMAAACq939wAAAA/FBMVEWqVQCqcQCZZgCLXQCdYgDMjACOXACOXwCacQCfcQCqegCwggChggCnfwCwggCthACtgQC9iACleQC+iwDMlgDJlACmfgDDiwDBjADHlQDJnQDFlQDKmAChfRGjgBOmfhKmghKnghOqhBKthxOviROvjB+vjCGvjCOwiRSwihixixWxjSGziBOzkSmzky+0kSa0kiy3jxW8kxS8mCi8n0i8oEq9lBe9mSvOoBbUrTTUrTjbukXcsTDctDrdtj/exHbexXDfwWXfwmvjrBnksRjksx7lrhnqx17qyWTqymrq377rz3nr2qftuiHtvSv67cD67sj+997/+OX///8rcy1sAAAAHXRSTlMDCQoLDRQkKystMDc5Oj0+QUlKS0tMTVFSV15/i6wTI/gAAACWSURBVHjaHcrnAoFQGADQryI7sjNKN0RKZJVNQ8io938YN+f3ASDp1B9NAhD15UzXNH26KhNQXZyDBxZcNlloKadvFIbR56owUOFV9425ai8PrGwZaITQeisXoKHs7k/MP44ZaHYl54U5El8EdmjNEWbEjesf/Ljd9v0S1ETBtD3PNgUxB8nOQIybOGknAKgMy2FsmoIflIEZdK7PshkAAAAASUVORK5CYII=",
-        pending: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABWUlEQVR4nI2Sy0sCURTGD6S2jjYFrdy0DNpEhokb8zFm5YyaO6NFYNGqF/0hPZYtR79FUbgw0BFtDKIgUCSpv8Od3XtGJzWDBj64h/l+954XdbtdGhQZkzNUd7ptifiXZygo0Wz0WsWoyHTMj4Wo6nRLQ7KdRuZz15bWSiF0GQOVXJ4hqP/COGDTjEO9SyByIcDHiUXiT+QsAaW1wabgi4KtVxVqM4lQVcFx4RS5tzy0vIgZFDVTnaYkFG6us2lbTyNws4ZAMYizwjk6nQ7KbQOJfMqCRBlERZpWruJYfvYigx02ZfUDHN2e8Pnpy8T+w6G4MIqI8HFH5Ut9SKZQ/jDYPAh4K36EGzGrkwz1avK8+/jn3n2WzaPASsNnQaJpvYG65ixwFV7Dj7iuQcul+Cwvs4Ga1fafOVUcC31Qpio1BJjO0PiNEJPn9osapeyNqLmW/lyj/+7eN1qRZT0kKLSqAAAAAElFTkSuQmCC",
-        reversed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABOklEQVR42p2SvU4CQRSFj+9h7DQ2VmsDCy0/Cw2wsNtuRwixIiQ8CZaWGDBaaAiJyVAg2xi1AaTQ19jyOHeSIbLBxuIkM7Pn23PvnQHJPSngNAYcK9mnPWng/LpaZVoadg9CC+BSDNsg4FcU7bRpNjkslaiAYAfZhL+AuFbjQ6PBYaXCZ6AK4Mj0IMBGH4rptVjkW73Ote9zUS5z2u/zfTzmRBL1XoNniIFjgdaeZ0yjMORNocCZ1nQwYJIk3CrFSatlIGkDM+BEouNMhndRZEyjTof3vZ5Zfy+XfOp2zQ+ND3BMkoWkhE+lxLwHzPN5rjzPTtLZ9fSRzZqPj+22MaeBlesaSIZmp3dhQZXLcaQHcev7sjZnFngBwr17mgNFC+pSRRawZV0dfBFy89ogDYvEbBMav33/ens/XHaDp7U/bFsAAAAASUVORK5CYII="
-    },
-
-    /** Specifies how to display different currencies. */
-    currencies: {
-        USD: {unit: 'US$', precision: 2},
-        BTC: {unit: '฿'},
-        JPY: {unit: '¥'},
-        GBP: {unit: '£', precision: 2},
-        EUR: {unit: '€', precision: 2},
-        AUD: {unit: 'A$', precision: 2},
-        CAD: {unit: 'C$', precision: 2}
-    },
-
     options: {
         baseTip: {
             name: 'Default Tip',
@@ -174,6 +78,101 @@ modules['bitcoinTip'] = {
             ],
             description: 'Mapping of usernames to bitcoin addresses'
         }
+    },
+    isEnabled: function() {
+        return RESConsole.getModulePrefs(this.moduleID);
+    },
+    include: Array(
+            /https?:\/\/([a-z]+).reddit.com\/[\?]*/i
+    ),
+    exclude: Array(
+            /https?:\/\/([a-z]+).reddit.com\/[\?]*\/user\/bitcointip\/?/i
+    ),
+    isMatchURL: function() {
+        return RESUtils.isMatchURL(this.moduleID);
+    },
+    beforeLoad: function() {
+        RESUtils.addCSS('.tip-bitcoins { cursor: pointer; }');
+        RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
+        RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
+    },
+
+    go: function() {        
+        if (!this.isEnabled() || !this.isMatchURL()) {
+            return;
+        }
+
+        this.addjQueryUtilities();
+
+        if (this.options.status.value === 'basic') {
+            this.icons.pending = this.icons.completed;
+            this.icons.reversed = this.icons.completed;
+        }
+
+        if (this.options.attachButtons.value) {
+            this.attachTipButtons();
+        }
+
+        if (this.options.subreddit.value) {
+            this.attachSubredditIndicator();
+        }
+
+        if (this.options.hide.value) {
+            this.hideVerifications();
+        }
+
+        if (this.options.balance.value) {
+            this.attachBalance();
+        }
+
+        if (this.options.status.value !== 'none') {
+            var tips = this.getTips(this.tipregex);
+            var fun = this.getTips(this.tipregexFun);
+            var all = $.extend({}, tips, fun);
+            if (Object.keys(all).length > 0) {
+                this.attachTipStatuses(all);
+                this.attachReceiverStatus(this.getTips(/(?:)/));
+            }
+        }
+
+        if (RESUtils.currentSubreddit() === 'bitcointip') {
+            this.injectBotStatus();
+        }
+    },
+
+    /** Specifies how to find tips. */
+    tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
+    tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
+
+    /** How many milliseconds until the bot is considered down. */
+    botDownThreshold: 15 * 60 * 1000,
+
+    /** Bitcointip API endpoints. */
+    api: {
+        gettips: 'https://bitcointip.net/api/gettips.php',
+        gettipped: 'https://bitcointip.net/api/gettipped.php',
+        subreddits: 'https://bitcointip.net/api/subreddits.php',
+        balance: 'https://bitcointip.net/api/balance.php'
+    },
+
+    /** Encoded tipping icons. */
+    icons: {
+        completed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAt1BMVEX///8AAAAAyAAAuwAAwQcAvAcAvwAAwQYAyAUAxAUAxwQAwgQAvAMAxQYAvwYAxQYAxwU5yT060j460j871T89wUE9wkFGokdGu0hIzExJl09JmE9JxExJxE1K1U9K1k5Ll09LmVNMmVNM2FBNmlRRx1NSzlRTqlVUslZU1ldVq1hVrFdV2FhWrFhX21pZqlphrWJh3WRotGtrqm1stW91sXd2t3h5t3urz6zA2sHA28HG3sf4+PhvgZhQAAAAEXRSTlMAARweJSYoLTM0O0dMU1dYbkVIv+oAAACKSURBVHjaVc7XEoIwEIXhFRED1tBUxBaPFSyxK3n/5zIBb/yv9pudnVky2Ywxm345MHkVXByllPm4W24qrLbzdo1sLPPRepc+XlnSIAuz9DQYPtXnkLhUF/ysrndV3CYLRpbg2VtpxFMwfRfEl8IghEPUhB9t9lEQoke6FnzONfpU5kEIoKOn/z+/pREPWTic38sAAAAASUVORK5CYII=",
+        cancelled: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAMAAABFNRROAAAAQlBMVEX///+qAAAAAAC/AADIABSaTU3YMDDcPj7cSEjeUFDiZGTld3fmfHzoiorqkJDqlpbupKTuqqr99fX99/f+/Pz////kWqLlAAAABXRSTlMAAwcIM6KYVMQAAABfSURBVHjaXc7JDsAgCEVRsYpIBzro//9qHyHpond3AgkklIuXPKJcqleIIEB6FwEhQEW0t4rlUtt+22ZTMQ09NqZyiK8BtBCvc9iDWegY526hBVRmdcQ9RgD9f/G+P1+JEwRF2vKhRgAAAABJRU5ErkJggg==",
+        tipped: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAANCAMAAACq939wAAAA/FBMVEWqVQCqcQCZZgCLXQCdYgDMjACOXACOXwCacQCfcQCqegCwggChggCnfwCwggCthACtgQC9iACleQC+iwDMlgDJlACmfgDDiwDBjADHlQDJnQDFlQDKmAChfRGjgBOmfhKmghKnghOqhBKthxOviROvjB+vjCGvjCOwiRSwihixixWxjSGziBOzkSmzky+0kSa0kiy3jxW8kxS8mCi8n0i8oEq9lBe9mSvOoBbUrTTUrTjbukXcsTDctDrdtj/exHbexXDfwWXfwmvjrBnksRjksx7lrhnqx17qyWTqymrq377rz3nr2qftuiHtvSv67cD67sj+997/+OX///8rcy1sAAAAHXRSTlMDCQoLDRQkKystMDc5Oj0+QUlKS0tMTVFSV15/i6wTI/gAAACWSURBVHjaHcrnAoFQGADQryI7sjNKN0RKZJVNQ8io938YN+f3ASDp1B9NAhD15UzXNH26KhNQXZyDBxZcNlloKadvFIbR56owUOFV9425ai8PrGwZaITQeisXoKHs7k/MP44ZaHYl54U5El8EdmjNEWbEjesf/Ljd9v0S1ETBtD3PNgUxB8nOQIybOGknAKgMy2FsmoIflIEZdK7PshkAAAAASUVORK5CYII=",
+        pending: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABWUlEQVR4nI2Sy0sCURTGD6S2jjYFrdy0DNpEhokb8zFm5YyaO6NFYNGqF/0hPZYtR79FUbgw0BFtDKIgUCSpv8Od3XtGJzWDBj64h/l+954XdbtdGhQZkzNUd7ptifiXZygo0Wz0WsWoyHTMj4Wo6nRLQ7KdRuZz15bWSiF0GQOVXJ4hqP/COGDTjEO9SyByIcDHiUXiT+QsAaW1wabgi4KtVxVqM4lQVcFx4RS5tzy0vIgZFDVTnaYkFG6us2lbTyNws4ZAMYizwjk6nQ7KbQOJfMqCRBlERZpWruJYfvYigx02ZfUDHN2e8Pnpy8T+w6G4MIqI8HFH5Ut9SKZQ/jDYPAh4K36EGzGrkwz1avK8+/jn3n2WzaPASsNnQaJpvYG65ixwFV7Dj7iuQcul+Cwvs4Ga1fafOVUcC31Qpio1BJjO0PiNEJPn9osapeyNqLmW/lyj/+7eN1qRZT0kKLSqAAAAAElFTkSuQmCC",
+        reversed: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAABOklEQVR42p2SvU4CQRSFj+9h7DQ2VmsDCy0/Cw2wsNtuRwixIiQ8CZaWGDBaaAiJyVAg2xi1AaTQ19jyOHeSIbLBxuIkM7Pn23PvnQHJPSngNAYcK9mnPWng/LpaZVoadg9CC+BSDNsg4FcU7bRpNjkslaiAYAfZhL+AuFbjQ6PBYaXCZ6AK4Mj0IMBGH4rptVjkW73Ote9zUS5z2u/zfTzmRBL1XoNniIFjgdaeZ0yjMORNocCZ1nQwYJIk3CrFSatlIGkDM+BEouNMhndRZEyjTof3vZ5Zfy+XfOp2zQ+ND3BMkoWkhE+lxLwHzPN5rjzPTtLZ9fSRzZqPj+22MaeBlesaSIZmp3dhQZXLcaQHcev7sjZnFngBwr17mgNFC+pSRRawZV0dfBFy89ogDYvEbBMav33/ens/XHaDp7U/bFsAAAAASUVORK5CYII="
+    },
+
+    /** Specifies how to display different currencies. */
+    currencies: {
+        USD: {unit: 'US$', precision: 2},
+        BTC: {unit: '฿'},
+        JPY: {unit: '¥'},
+        GBP: {unit: '£', precision: 2},
+        EUR: {unit: '€', precision: 2},
+        AUD: {unit: 'A$', precision: 2},
+        CAD: {unit: 'C$', precision: 2}
     },
 
     /** Return a DOM element to separate items in the user bar. */
