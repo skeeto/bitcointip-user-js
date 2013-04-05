@@ -252,25 +252,28 @@ modules['bitcoinTip'] = {
     attachTipButtons: function attachTipButtons(ele) {
         ele = ele || document.body;
         
-        /* Add the "tip bitcoins" button after "give gold". */
-        var tip =
-        $('<span class="tip-wrapper">' +
-              '<div class="dropdown">' +
-                '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">tip</a>' +
-              '</div>' +
-            '</span>');
-
-        tip.live('click', function(e) {
-            modules['bitcoinTip'].toggleTipMenu(e.target);
-        });
+        if (!this.tipButton) {
+            this.tipButton = $(
+                '<span class="tip-wrapper">' +
+                  '<div class="dropdown">' +
+                    '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">tip</a>' +
+                  '</div>' +
+                '</span>');
+            this.tipButton.bind('click', function(e) {
+                modules['bitcoinTip'].toggleTipMenu(e.target);
+            });
+        }
 
         if (/^\/r\//.test(document.location.pathname)) {
+            /* Add the "tip bitcoins" button after "give gold". */
             var allGiveGoldLinks = ele.querySelectorAll('a.give-gold');
             RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
-                $(giveGold).parent().after($('<li/>').append(tip.clone(true)));
+                $(giveGold).parent().after($('<li/>')
+                    .append(modules['bitcoinTip'].tipButton.clone(true)));
             });
             if ($('.link').length === 1) { // Viewing a submission?
-                $('.link ul.buttons').append($('<li/>').append(tip.clone(true)));
+                $('.link ul.buttons').append($('<li/>')
+                    .append(modules['bitcoinTip'].tipButton.clone(true)));
             }
          }
     },
