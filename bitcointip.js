@@ -235,6 +235,24 @@ modules['bitcoinTip'] = {
         });
     },
 
+    attachSubredditIndicator: function() {
+        var subreddit = RESUtils.currentSubreddit();
+        if (subreddit) {
+            $.getJSON(this.api.subreddits, function(data) {
+                if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
+                    $('#header-bottom-right form.logout')
+                        .before(this.separator()).prev()
+                        .before($('<img/>').attr({
+                            'src': this.icons.tipped,
+                            'class': 'tips-enabled-icon',
+                            'style': 'vertical-align: text-bottom;',
+                            'title': 'Tips enabled in this subreddit.'
+                        }));
+                }
+            }.bind(this));
+        }
+    },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -270,30 +288,7 @@ modules['bitcoinTip'] = {
                 });
                 return this;
             };
-    
 
-            /* Subreddit indicator. */
-            var subreddit = (function(match) {
-                if (match) {
-                    return match[1];
-                } else {
-                    return null;
-                }
-            }(location.pathname.match(/\/r\/([^/]+)/)));
-            if (this.options.subreddit.value && subreddit) {
-                $.getJSON(api.subreddits, function(data) {
-                    if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
-                        $('#header-bottom-right form.logout')
-                            .before(...)
-                            .prev().before($('<img/>').attr({
-                                'src': modules['bitcoinTip'].icons.tipped,
-                                'class': 'tips-enabled-icon',
-                                'title': 'bitcointip is enabled in this subreddit.',
-                                'alt': 'bitcointip is enabled in this subreddit.'
-                            }));
-                    }
-                });
-            }
 
             /* Balance indicator. */
             var user = $('#header-bottom-right span.user a').first().text();
