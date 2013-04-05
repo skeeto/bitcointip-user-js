@@ -465,37 +465,34 @@ modules['bitcoinTip'] = {
         }
     },
 
-    go: function() {
-        if ((this.isEnabled()) && (this.isMatchURL())) {
-            // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
+    go: function() {        
+        if (!this.isEnabled() || !this.isMatchURL()) {
+            return;
+        }
 
-            // var $ = unsafeWindow.$,
-            //     S = unsafeWindow.localStorage,
-            //     reddit = unsafeWindow;
+         /**
+         * Set textarea cursor position in jQuery.
+         */
+        $.fn.setCursorPosition = function(pos) {
+            this.each(function(index, elem) {
+                if (elem.setSelectionRange) {
+                    elem.setSelectionRange(pos, pos);
+                } else if (elem.createTextRange) {
+                    var range = elem.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            });
+            return this;
+        };
 
-            /* Helper functions. */
+        /** Find the thing for this element. */
+        $.fn.thing = function() {
+            return this.closest('.thing');
+        };
 
-            function identity(x) {
-                return x;
-            }
-
-            /**
-             * Set textarea cursor position in jQuery.
-             */
-            $.fn.setCursorPosition = function(pos) {
-                this.each(function(index, elem) {
-                    if (elem.setSelectionRange) {
-                        elem.setSelectionRange(pos, pos);
-                    } else if (elem.createTextRange) {
-                        var range = elem.createTextRange();
-                        range.collapse(true);
-                        range.moveEnd('character', pos);
-                        range.moveStart('character', pos);
-                        range.select();
-                    }
-                });
-                return this;
-            };
 
 
             /* Balance indicator. */
