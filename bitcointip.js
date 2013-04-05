@@ -296,6 +296,32 @@ modules['bitcoinTip'] = {
         return address;
     },
 
+    
+    attachBalance: function attachBalance() {
+        var user = RESUtils.loggedInUser();
+        var address = this.getAddress(user);
+        if (!address) return;
+        var bitcoinTip = this;
+
+        $.getJSON(this.api.balance, {
+            username: user,
+            address: address
+        }, function (balance) {
+            if (!('balanceBTC' in balance)) {
+                return; /* Probably have the address wrong! */
+            }
+            $('#header-bottom-right form.logout')
+                .before(bitcoinTip.separator()).prev()
+                .before($('<a/>').attr({
+                    'class': 'hover',
+                    'href': '#'
+                }).click(function() {
+                    bitcoinTip.toggleCurrency();
+                    $(this).text(bitcoinTip.quantityString(balance));
+                }).text(bitcoinTip.quantityString(balance)));
+        });
+    },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -356,28 +382,6 @@ modules['bitcoinTip'] = {
                 return meta.unit + quantity;
             }
 
-            function insertBalance() {
-                $.getJSON(api.balance, {
-                    username: user,
-                    address: address
-                }, function (balance) {
-                    if (!('balanceBTC' in balance)) {
-                        /* Probably got the address wrong. */
-                        S.removeItem('address.' + user);
-                        return;
-                    }
-                    var units = modules['bitcoinTip'].options.balanceUnits.value;
-                    $('#header-bottom-right form.logout').before(...)
-                        .prev().before($('<a/>').attr({
-                        'class': 'hover',
-                        'href': '#'
-                    }).bind('click', function() {
-                        ...();
-                        $(this).text(currencyString(balance));
-                    }).text(currencyString(balance)));
-                });
-            }
-
             if (this.options.balance.value && user != null && address == null) {
                 // this can NOT be called on every page load... not with RES's huge userbase....
                 var lastCheck = parseInt(RESStorage.getItem('RESmodules.bitcoinTip.lastCheck.'+RESUtils.loggedInUser()), 10) || 0;
@@ -400,12 +404,12 @@ modules['bitcoinTip'] = {
                         }).filter(identity)[0]; // Use the most recent
                         if (address) {
                             // S['address.' + user] = address;
-                            insertBalance();
+                            ...();
                         }
                     });
                 }
             } else if (this.options.balance.value && user != null && address != null) {
-                insertBalance();
+                ...();
             }
 
             /* Reddit jQuery plugin. */
