@@ -140,6 +140,44 @@ modules['bitcoinTip'] = {
         }
     },
 
+    save: function save() {
+        var json = JSON.stringify(this.options);
+        RESStorage.setItem('RESoptions.bitcoinTip', json);
+    },
+
+    load: function load() {
+        var json = RESStorage.getItem('RESoptions.bitcoinTip');
+        if (json) {
+            this.options = JSON.parse(json);
+        }
+    },
+
+    addjQueryUtilities: function() {
+        /**
+         * Set textarea cursor position in jQuery.
+         */
+        $.fn.setCursorPosition = function(pos) {
+            this.each(function(index, elem) {
+                if (elem.setSelectionRange) {
+                    elem.setSelectionRange(pos, pos);
+                } else if (elem.createTextRange) {
+                    var range = elem.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            });
+            return this;
+        };
+
+        /** Find the thing for this element. */
+        $.fn.thing = function() {
+            return this.closest('.thing');
+        };
+    },
+
+
     /** Specifies how to find tips. */
     tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
     tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
@@ -492,43 +530,6 @@ modules['bitcoinTip'] = {
             $('a[href="http://bitcointip.net/status.php"]').html(botStatus);
         });
     },
-
-    save: function save() {
-        var json = JSON.stringify(this.options);
-        RESStorage.setItem('RESoptions.bitcoinTip', json);
-    },
-
-    load: function load() {
-        var json = RESStorage.getItem('RESoptions.bitcoinTip');
-        if (json) {
-            this.options = JSON.parse(json);
-        }
-    },
-
-    addjQueryUtilities: function() {
-        /**
-         * Set textarea cursor position in jQuery.
-         */
-        $.fn.setCursorPosition = function(pos) {
-            this.each(function(index, elem) {
-                if (elem.setSelectionRange) {
-                    elem.setSelectionRange(pos, pos);
-                } else if (elem.createTextRange) {
-                    var range = elem.createTextRange();
-                    range.collapse(true);
-                    range.moveEnd('character', pos);
-                    range.moveStart('character', pos);
-                    range.select();
-                }
-            });
-            return this;
-        };
-
-        /** Find the thing for this element. */
-        $.fn.thing = function() {
-            return this.closest('.thing');
-        };
-    }
 
     toggleTipMenu: function(ele) {
         var tipMenu = modules['bitcoinTip'].tipMenu;
