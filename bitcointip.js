@@ -253,6 +253,17 @@ modules['bitcoinTip'] = {
         }
     },
 
+    hideVerifications: function hideVerifications() {
+        /* t2_7vw3n is u/bitcointip. */
+        $('a.id-t2_7vw3n').closest('.comment').each(function() {
+            var $this = $(this);
+            var isTarget = $this.find('form:first').hasClass('border');
+            if ($this.find('.comment').length === 0 && !isTarget) {
+                $this.find('.expand').eq(2).click();
+            }
+        });
+    },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -440,17 +451,6 @@ modules['bitcoinTip'] = {
                     return this.closest('.link').length === 0;
                 };
             // })(unsafeWindow.jQuery);
-
-            /* Hide verification replies. Note: t2_7vw3n is /u/bitcointip. */
-            if (this.options.hide.value) {
-                $('a.id-t2_7vw3n').comment().each(function() {
-                    var $this = $(this);
-                    if ($this.commentChildren().length === 0 && !$this.isTarget()) {
-                        // TODO: figure out a way to get this working.
-                        // reddit.hidecomment($this.find('.expand').first());
-                    }
-                });
-            }
 
             /* Find all the tip comments. */
             var tips = {};
