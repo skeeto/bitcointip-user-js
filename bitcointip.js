@@ -453,6 +453,18 @@ modules['bitcoinTip'] = {
         });
     },
 
+    save: function save() {
+        var json = JSON.stringify(this.options);
+        RESStorage.setItem('RESoptions.bitcoinTip', json);
+    },
+
+    load: function load() {
+        var json = RESStorage.getItem('RESoptions.bitcoinTip');
+        if (json) {
+            this.options = JSON.parse(json);
+        }
+    },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
