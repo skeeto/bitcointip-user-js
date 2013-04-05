@@ -123,6 +123,9 @@ modules['bitcoinTip'] = {
 
         if (this.options.hide.value) {
             this.hideVerifications();
+            if (RESUtils.watchForElement) {
+                RESUtils.watchForElement('newComments', modules['bitcoinTip'].hideVerifications);
+            }
         }
 
         if (this.options.balance.value) {
@@ -355,11 +358,12 @@ modules['bitcoinTip'] = {
         }
     },
 
-    hideVerifications: function hideVerifications() {
+    hideVerifications: function hideVerifications(ele) {
+        ele = ele || document.body;
+
         /* t2_7vw3n is u/bitcointip. */
-        $('a.id-t2_7vw3n').closest('.comment').each(function() {
-            var $this = $(this);
-        var botComments = $('a.id-t2_7vw3n').closest('.comment');
+
+        var botComments = $(ele).find('a.id-t2_7vw3n').closest('.comment');
         RESUtils.forEachChunked(botComments, 15, 1000, function(botComment, i, array) {
             var $this = $(botComment);
             var isTarget = $this.find('form:first').hasClass('border');
