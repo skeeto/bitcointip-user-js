@@ -132,6 +132,12 @@ modules['bitcoinTip'] = {
         }
     },
 
+    /** Return a DOM element to separate items in the user bar. */
+    separator: function() {
+        return $('<span>|</span>').addClass('separator');
+    },
+
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -263,9 +269,7 @@ modules['bitcoinTip'] = {
                 $.getJSON(api.subreddits, function(data) {
                     if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
                         $('#header-bottom-right form.logout')
-                            .before($('<span>|</span>').attr({
-                                'class': 'separator'
-                            }))
+                            .before(...)
                             .prev().before($('<img/>').attr({
                                 'src': modules['bitcoinTip'].icons.tipped,
                                 'class': 'tips-enabled-icon',
@@ -317,9 +321,8 @@ modules['bitcoinTip'] = {
                         return;
                     }
                     var units = modules['bitcoinTip'].options.balanceUnits.value;
-                    $('#header-bottom-right form.logout').before($('<span>|</span>').attr({
-                        'class': 'separator'
-                    })).prev().before($('<a/>').attr({
+                    $('#header-bottom-right form.logout').before(...)
+                        .prev().before($('<a/>').attr({
                         'class': 'hover',
                         'href': '#'
                     }).bind('click', function() {
