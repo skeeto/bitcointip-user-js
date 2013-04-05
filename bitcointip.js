@@ -137,6 +137,20 @@ modules['bitcoinTip'] = {
         return $('<span>|</span>').addClass('separator');
     },
 
+    /** Convert a quantity into a string. */
+    quantityString: function quantityString(object) {
+        var pref = this.options.currency.value.toUpperCase();
+        var unit = this.currencies[pref];
+        var amount = object['amount' + pref] || object['balance' + pref];
+        if (amount == null) {
+            amount = object['amountBTC'] || object['balanceBTC'];
+            unit = this.currencies['BTC'];
+        }
+        if (unit.precision) {
+            amount = parseFloat(amount).toFixed(unit.precision);
+        }
+        return unit.unit + amount;
+    },
 
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
@@ -173,14 +187,6 @@ modules['bitcoinTip'] = {
                 });
                 return this;
             };
-
-            function quantity(object) {
-                var pref = modules['bitcoinTip'].options.currency.value.toUpperCase();
-                var unit = displayCurrency['balance' + pref];
-                var amount = object['amount' + pref];
-                return unit.unit + amount;
-            }
-
 
             /* Add the "tip bitcoins" button after "give gold". */
             var tip =
@@ -480,7 +486,7 @@ modules['bitcoinTip'] = {
                         tagline.append(icon.append($('<img/>').attr({
                             src: modules['bitcoinTip'].icons[tip.status],
                             style: iconStyle,
-                            title: quantity(tip) + ' → ' + tip.receiver +
+                            title: ...(tip) + ' → ' + tip.receiver +
                                 ' (' + tip.status + ')'
                         })));
                         confirmedIDs.push(id);
@@ -518,7 +524,7 @@ modules['bitcoinTip'] = {
                         var thing = things[id];
                         var tagline = thing.find('.tagline').first();
                         var plural = tipped.tipQTY > 1;
-                        var title = quantity(tipped) + ' to ' + thing.thingName() +
+                        var title = ...(tipped) + ' to ' + thing.thingName() +
                                 ' for this ';
                         if (plural) {
                             title = 'redditors have given ' + title;
