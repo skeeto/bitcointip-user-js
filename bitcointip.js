@@ -188,6 +188,53 @@ modules['bitcoinTip'] = {
         window.location = url;
     },
 
+    attachTipButtons: function attachTipButtons() {
+        /* Add the "tip bitcoins" button after "give gold". */
+        var tip =
+        $('<span class="tip-wrapper">' +
+              '<div class="dropdown">' +
+                '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">tip</a>' +
+              '</div>' +
+            '</span>');
+
+        tip.live('click', function(e) {
+            modules['bitcoinTip'].toggleTipMenu(e.target);
+        });
+
+        if (/^\/r\//.test(document.location.pathname)) {
+            // this operation should be chunked. On monster comment pages, it will lock UI hard. if we use the old code, which is:
+            // $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
+            var allGiveGoldLinks = document.body.querySelectorAll('a.give-gold');
+            RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
+                $(giveGold).parent().after($('<li/>').append(tip.clone(true)));
+            });
+            if ($('.link').length === 1) { // Viewing a submission?
+                $('.link ul.buttons').append($('<li/>').append(tip.clone(true)));
+            }
+         }
+    },
+
+    attachTipMenu: function() {
+        this.tipMenu = 
+            $('<div id="tip-menu" class="drop-choices">' +
+                '<a class="choice tip-publicly" href="javascript:void(0);">tip publicly</a>' +
+                '<a class="choice tip-privately" href="javascript:void(0);">tip privately</a>' +
+                modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null, 
+                    '<img src="' + this.icons.tipped + '"> bitcointip', 'choice') +
+               '</div>');
+         $(document.body).append(this.tipMenu);
+
+        $('.tip-publicly').click(function(event) {
+            event.preventDefault();
+            bitcoinTip.tipPublicly($(event.target));
+        });
+
+        $('.tip-privately').click(function(event) {
+            event.preventDefault();
+            bitcoinTip.tipPrivately($(event.target));
+        });
+    },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -223,55 +270,7 @@ modules['bitcoinTip'] = {
                 });
                 return this;
             };
-
-            /* Add the "tip bitcoins" button after "give gold". */
-            var tip =
-              $('<span class="tip-wrapper">' +
-                  '<div class="dropdown">' +
-                    '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">tip</a>' +
-                  '</div>' +
-                '</span>');
-
-            this.tipMenu = 
-                $('<div id="tip-menu" class="drop-choices">' +
-                    '<a class="choice tip-publicly" href="javascript:void(0);">tip publicly</a>' +
-                    '<a class="choice tip-privately" href="javascript:void(0);">tip privately</a>' +
-                    modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null, 
-                        '<img src="' + this.icons.tipped + '"> bitcointip', 'choice') +
-                  '</div>');
-
-            $(document.body).append(this.tipMenu);
-
-            $('.tip-wrapper .dropdown').live('click', function(e) {
-                modules['bitcoinTip'].toggleTipMenu(e.target);
-            });
-
-            if (/^\/r\//.test(document.location.pathname)) {
-                // this operation should be chunked. On monster comment pages, it will lock UI hard. if we use the old code, which is:
-                // $('a.give-gold').parent().after($('<li/>').append(tip.clone()));
-                var allGiveGoldLinks = document.body.querySelectorAll('a.give-gold');
-                RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
-                    $(giveGold).parent().after($('<li/>').append(tip.clone()));
-                });
-                if ($('.link').length === 1) { // Viewing a submission?
-                    $('.link ul.buttons').append($('<li/>').append(tip.clone()));
-                }
-            }
-
-            $('#tip-menu .tip-publicly').click(function(event) {
-                $('#tip-menu').hide();
-                event.preventDefault();
-                // var $target = $(event.target);
-                var $target = $(modules['bitcoinTip'].lastToggle);
-                ...
-            });
-
-            $('#tip-menu .tip-privately').click(function(event) {
-                event.preventDefault();
-                $('#tip-menu').hide();
-                var $target = $(modules['bitcoinTip'].lastToggle);
-                ...
-            });
+    
 
             /* Subreddit indicator. */
             var subreddit = (function(match) {
