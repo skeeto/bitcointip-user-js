@@ -268,9 +268,11 @@ modules['bitcoinTip'] = {
                 $(giveGold).parent().after($('<li/>')
                     .append(modules['bitcoinTip'].tipButton.clone(true)));
             });
-            if ($('.link').length === 1) { // Viewing a submission?
+
+            if (!module.attachedPostTipButton && $('.link').length) { // Viewing a submission?
                 $('.link ul.buttons').append($('<li/>')
                     .append(modules['bitcoinTip'].tipButton.clone(true)));
+                module.attachedPostTipButton = true;
             }
          }
     },
