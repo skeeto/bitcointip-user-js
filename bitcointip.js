@@ -462,12 +462,8 @@ modules['bitcoinTip'] = {
         }
     },
 
-    go: function() {        
-        if (!this.isEnabled() || !this.isMatchURL()) {
-            return;
-        }
-
-         /**
+    addjQueryUtilities: function() {
+        /**
          * Set textarea cursor position in jQuery.
          */
         $.fn.setCursorPosition = function(pos) {
@@ -489,6 +485,14 @@ modules['bitcoinTip'] = {
         $.fn.thing = function() {
             return this.closest('.thing');
         };
+    }
+
+    go: function() {        
+        if (!this.isEnabled() || !this.isMatchURL()) {
+            return;
+        }
+
+        this.addjQueryUtilities();
 
         if (this.options.status.value === 'basic') {
             this.icons.pending = this.icons.completed;
