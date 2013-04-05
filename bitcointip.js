@@ -359,6 +359,9 @@ modules['bitcoinTip'] = {
         /* t2_7vw3n is u/bitcointip. */
         $('a.id-t2_7vw3n').closest('.comment').each(function() {
             var $this = $(this);
+        var botComments = $('a.id-t2_7vw3n').closest('.comment');
+        RESUtils.forEachChunked(botComments, 15, 1000, function(botComment, i, array) {
+            var $this = $(botComment);
             var isTarget = $this.find('form:first').hasClass('border');
             if ($this.find('.comment').length === 0 && !isTarget) {
                 $this.find('.expand').eq(2).click();
