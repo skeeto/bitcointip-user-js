@@ -111,6 +111,9 @@ modules['bitcoinTip'] = {
 
         if (this.options.attachButtons.value) {
             this.attachTipButtons();
+            if (RESUtils.watchForElement) {
+                RESUtils.watchForElement('newComments', modules['bitcoinTip'].attachTipButtons);
+            }
             this.attachTipMenu();
         }
 
@@ -270,7 +273,9 @@ modules['bitcoinTip'] = {
         window.location = url;
     },
 
-    attachTipButtons: function attachTipButtons() {
+    attachTipButtons: function attachTipButtons(ele) {
+        ele = ele || document.body;
+        
         /* Add the "tip bitcoins" button after "give gold". */
         var tip =
         $('<span class="tip-wrapper">' +
@@ -284,7 +289,7 @@ modules['bitcoinTip'] = {
         });
 
         if (/^\/r\//.test(document.location.pathname)) {
-            var allGiveGoldLinks = document.body.querySelectorAll('a.give-gold');
+            var allGiveGoldLinks = ele.querySelectorAll('a.give-gold');
             RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
                 $(giveGold).parent().after($('<li/>').append(tip.clone(true)));
             });
