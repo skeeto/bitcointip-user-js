@@ -296,7 +296,7 @@ modules['bitcoinTip'] = {
         return address;
     },
 
-    
+
     attachBalance: function attachBalance() {
         var user = RESUtils.loggedInUser();
         var address = this.getAddress(user);
@@ -320,6 +320,32 @@ modules['bitcoinTip'] = {
                     $(this).text(bitcoinTip.quantityString(balance));
                 }).text(bitcoinTip.quantityString(balance)));
         });
+    },
+
+    fetchAddress: function fetchAddress(user, callback) {
+        user = user || RESUtils.loggedInUser();
+        callback = callback || function nop() {};
+        if (!user) return;
+        $.getJSON('/message/messages.json', function(messages) {
+            /* Search messages for a bitcointip response. */
+            var address = messages.data.children.filter(function (message) {
+                return message.data.author === 'bitcointip';
+            }).map(function (message) {
+                var pattern = /Deposit Address: \| \[\*\*([a-zA-Z0-9]+)\*\*\]/;
+                var address = message.data.body.match(pattern);
+                if (address) {
+                    return address[1];
+                } else {
+                    return false;
+                }
+            }).filter(function(x) { return x; })[0]; // Use the most recent
+            if (address) {
+                this.setAddress(user, address);
+                callback(address);
+            } else {
+                callback(null);
+            }
+        }.bind(this));
     },
 
     go: function() {
@@ -383,31 +409,7 @@ modules['bitcoinTip'] = {
             }
 
             if (this.options.balance.value && user != null && address == null) {
-                // this can NOT be called on every page load... not with RES's huge userbase....
-                var lastCheck = parseInt(RESStorage.getItem('RESmodules.bitcoinTip.lastCheck.'+RESUtils.loggedInUser()), 10) || 0;
-                var now = new Date();
-                // 300000 = 5 minutes... we don't want to annoy Reddit's servers too much with this query...
-                if ((now.getTime() - lastCheck) > 300000) {
-                    $.getJSON('/message/messages.json', function(messages) {
-                        RESStorage.setItem('RESmodules.bitcoinTip.lastCheck.'+RESUtils.loggedInUser(), now.getTime());                      
-                        /* Search messages for a bitcointip response. */
-                        address = messages.data.children.filter(function (message) {
-                            return message.data.author === 'bitcointip';
-                        }).map(function (message) {
-                            var pattern = /Deposit Address: \| \[\*\*([a-zA-Z0-9]+)\*\*\]/;
-                            var address = message.data.body.match(pattern);
-                            if (address) {
-                                return address[1];
-                            } else {
-                                return false;
-                            }
-                        }).filter(identity)[0]; // Use the most recent
-                        if (address) {
-                            // S['address.' + user] = address;
-                            ...();
-                        }
-                    });
-                }
+                ...
             } else if (this.options.balance.value && user != null && address != null) {
                 ...();
             }
