@@ -102,8 +102,6 @@ modules['bitcoinTip'] = {
             return;
         }
 
-        this.addjQueryUtilities();
-
         if (this.options.status.value === 'basic') {
             this.icons.pending = this.icons.completed;
             this.icons.reversed = this.icons.completed;
@@ -157,13 +155,6 @@ modules['bitcoinTip'] = {
         if (json) {
             this.options = JSON.parse(json);
         }
-    },
-
-    addjQueryUtilities: function() {
-        /** Find the thing for this element. */
-        $.fn.thing = function() {
-            return this.closest('.thing');
-        };
     },
 
 
@@ -228,7 +219,7 @@ modules['bitcoinTip'] = {
             form = $('.commentarea .usertext:first');
         } else { /* Comment */
             $target.closest('ul').find('a[onclick*="reply"]').click();
-            form = $target.thing().find('FORM.usertext.cloneable:first');
+            form = $target.closest('.thing').find('FORM.usertext.cloneable:first');
         }
         var textarea = form.find('textarea');
         if (!textarea.val().match(this.tipregex)) {
@@ -243,7 +234,7 @@ modules['bitcoinTip'] = {
         if ($target.closest('.link').length > 0) { /* Post */
             form = $('.commentarea .usertext:first');
         } else {
-            form = $target.thing().find(".child .usertext:first");
+            form = $target.closest('.thing');.find(".child .usertext:first");
         }
         if (form.length > 0 && form.find('textarea').val()) {
             /* Confirm if a comment has been entered. */
@@ -251,7 +242,7 @@ modules['bitcoinTip'] = {
                 return;
             }
         }
-        var user = $target.thing().find('.author:first').text();
+        var user = $target.closest('.thing').find('.author:first').text();
         var msg = encodeURIComponent('+bitcointip @' + user + ' ' +
                                          this.options.baseTip.value);
         var url = '/message/compose?to=bitcointip&subject=Tip&message=' + msg;
