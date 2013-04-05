@@ -287,6 +287,10 @@ modules['bitcoinTip'] = {
                '</div>');
          $(document.body).append(this.tipMenu);
 
+        this.tipMenu.find('a').click(function(event) {
+            modules['bitcoinTip'].toggleTipMenu();
+        });
+
         this.tipMenu.find('.tip-publicly').click(function(event) {
             event.preventDefault();
             modules['bitcoinTip'].tipPublicly($(modules['bitcoinTip'].lastToggle));
@@ -301,6 +305,12 @@ modules['bitcoinTip'] = {
 
     toggleTipMenu: function(ele) {
         var tipMenu = modules['bitcoinTip'].tipMenu;
+
+        if (!ele || ele.length === 0) {
+            tipMenu.hide();
+            return;
+        }
+
         var thisXY = $(ele).offset();
         var thisHeight = $(ele).height();
         // if already visible and we've clicked a different trigger, hide first, then show after the move.
