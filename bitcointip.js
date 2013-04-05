@@ -346,9 +346,12 @@ modules['bitcoinTip'] = {
         RESUtils.forEachChunked(botComments, 15, 1000, function(botComment, i, array) {
             var $this = $(botComment);
             var isTarget = $this.find('form:first').hasClass('border');
-            if ($this.find('.comment').length === 0 && !isTarget) {
-                $this.find('.expand').eq(2).click();
-            }
+            if (isTarget) return;
+
+            var hasReplies = $this.find('.comment').length > 0;
+            if (hasReplies) return;
+               
+            $this.find('.expand').eq(2).click();
         });
     },
 
