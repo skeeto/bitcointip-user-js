@@ -152,6 +152,42 @@ modules['bitcoinTip'] = {
         return unit.unit + amount;
     },
 
+    tipPublicly: function tipPublicly($target) {
+        var form = null;
+        if ($target.closest('.link').length > 0) { /* Post */
+            form = $('.commentarea .usertext:first');
+        } else { /* Comment */
+            $target.closest('ul').find('a[onclick*="reply"]').click();
+            form = $target.thing().find('FORM.usertext.cloneable:first');
+        }
+        var textarea = form.find('textarea');
+        if (!textarea.val().match(this.tipregex)) {
+            textarea.val(textarea.val() + '\n\n+bitcointip ' +
+                         this.options.baseTip.value);
+            textarea.setCursorPosition(0);
+        }
+    },
+
+    tipPrivately: function tipPrivately($target) {
+        var form = null;
+        if ($target.closest('.link').length > 0) { /* Post */
+            form = $('.commentarea .usertext:first');
+        } else {
+            form = $target.thing().find(".child .usertext:first");
+        }
+        if (form.length > 0 && form.find('textarea').val()) {
+            /* Confirm if a comment has been entered. */
+            if (!confirm('Really leave this page to tip privately?')) {
+                return;
+            }
+        }
+        var user = $target.thing().find('.author:first').text();
+        var msg = encodeURIComponent('+bitcointip @' + user + ' ' +
+                                         this.options.baseTip.value);
+        var url = '/message/compose?to=bitcointip&subject=Tip&message=' + msg;
+        window.location = url;
+    },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
@@ -227,40 +263,14 @@ modules['bitcoinTip'] = {
                 event.preventDefault();
                 // var $target = $(event.target);
                 var $target = $(modules['bitcoinTip'].lastToggle);
-                if ($target.closest('.link').length > 0) { /* Post */
-                    form = $('.commentarea .usertext:first');
-                } else { /* Comment */
-                    $target.closest('ul').find('a[onclick*="reply"]').click();
-                    form = $target.closest('.thing').find('FORM.usertext.cloneable:first');
-                }
-                var textarea = form.find('textarea');
-                if (!textarea.val().match(tipregex)) {
-                    textarea.val(textarea.val() + '\n\n+tip ' + modules['bitcoinTip'].options.baseTip.value);
-                    textarea.setCursorPosition(0);
-                }
+                ...
             });
 
             $('#tip-menu .tip-privately').click(function(event) {
                 event.preventDefault();
                 $('#tip-menu').hide();
                 var $target = $(modules['bitcoinTip'].lastToggle);
-                var form = null;
-                if ($target.closest('.link').length > 0) { /* Post */
-                    form = $('.commentarea .usertext:first');
-                } else {
-                    form = $target.closest('.thing').find(".child .usertext:first");
-                }
-                if (form.length > 0 && form.find('textarea').val()) {
-                    /* Confirm if a comment has been entered. */
-                    if (!confirm('Really leave this page to tip privately?')) {
-                        return;
-                    }
-                }
-                var user = $target.closest('.thing').find('.author').first().text();
-                var message = encodeURIComponent('+bitcointip @' + user + ' ' +
-                                                 modules['bitcoinTip'].options.baseTip.value);
-                var url = '/message/compose?to=bitcointip&subject=Tip&message=' + message;
-                window.location = url;
+                ...
             });
 
             /* Subreddit indicator. */
