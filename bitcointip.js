@@ -245,17 +245,18 @@ modules['bitcoinTip'] = {
         window.location = url;
     },
 
-    attachTipButtons: function attachTipButtons(ele) {
+    attachTipButtons: function attachTipButtons(ele) {      
         ele = ele || document.body;
+        var module = modules['bitcoinTip'];
         
-        if (!this.tipButton) {
-            this.tipButton = $(
+        if (!module.tipButton) {
+            module.tipButton = $(
                 '<span class="tip-wrapper">' +
                   '<div class="dropdown">' +
                     '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">tip</a>' +
                   '</div>' +
                 '</span>');
-            this.tipButton.bind('click', function(e) {
+            module.tipButton.bind('click', function(e) {
                 modules['bitcoinTip'].toggleTipMenu(e.target);
             });
         }
