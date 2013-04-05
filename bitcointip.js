@@ -63,41 +63,75 @@ modules['bitcoinTip'] = {
 
     options: {
         baseTip: {
+            name: 'Default Tip',
             type: 'text',
             value: '0.01 BTC',
-            description: 'Default tip amount in the form of "[value] [units]", e.g. "0.01 BTC"'
+            description: 'Default tip amount in the form of ' +
+                '"[value] [units]", e.g. "0.01 BTC"'
+        },
+        attachButtons: {
+            name: 'Add "tip bitcoins" Button',
+            type: 'boolean',
+            value: true,
+            description: 'Attach "tip bitcoins" button to comments'
         },
         hide: {
+            name: 'Hide Bot Verifications',
             type: 'boolean',
             value: true,
             description: 'Hide bot verifications'
         },
         status: {
+            name: 'Tip Status Format',
             type: 'enum',
             values: [
                 { name: 'detailed', value: 'detailed' },
                 { name: 'basic', value: 'basic' },
-                { name: 'none', value: 'none' }             
+                { name: 'none', value: 'none' }
             ],
             value: 'detailed',
             description: 'Tip status - level of detail'
         },
         currency: {
-            type: 'text',
-            value: 'BTC',
-            description: 'Preferred currency (e.g. BTC, USD)'
+            name: 'Preferred Currency',
+            type: 'enum',
+            values: [
+                { name: 'BTC', value: 'BTC' },
+                { name: 'USD', value: 'USD' },
+                { name: 'JPY', value: 'JPY' },
+                { name: 'GBP', value: 'GBP' },
+                { name: 'EUR', value: 'EUR' }
+            ],
+            value: 'USD',
+            description: 'Preferred currency units'
         },
         balance: {
+            name: 'Display Balance',
             type: 'boolean',
             value: true,
             description: 'Display balance'
         },
         subreddit: {
+            name: 'Display Enabled Subreddits',
             type: 'boolean',
             value: true,
             description: 'Display enabled subreddits'
+        },
+        address: {
+            name: 'Known User Addresses',
+            type: 'table',
+            addRowText: '+add address',
+            fields: [
+                {name: 'user', type: 'text'},
+                {name: 'address', type: 'text'}
+            ],
+            value: [
+                /* ['skeeto', '1...'] */
+            ],
+            description: 'Mapping of usernames to bitcoin addresses'
         }
     },
+
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
             // copied and adjusted from http://userscripts.org/scripts/review/153975 with permission from the authors
