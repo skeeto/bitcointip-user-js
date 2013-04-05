@@ -26,6 +26,50 @@ modules['bitcoinTip'] = {
         RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
         RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
     },
+
+    go: function() {        
+        if (!this.isEnabled() || !this.isMatchURL()) {
+            return;
+        }
+
+        this.addjQueryUtilities();
+
+        if (this.options.status.value === 'basic') {
+            this.icons.pending = this.icons.completed;
+            this.icons.reversed = this.icons.completed;
+        }
+
+        if (this.options.attachButtons.value) {
+            this.attachTipButtons();
+        }
+
+        if (this.options.subreddit.value) {
+            this.attachSubredditIndicator();
+        }
+
+        if (this.options.hide.value) {
+            this.hideVerifications();
+        }
+
+        if (this.options.balance.value) {
+            this.attachBalance();
+        }
+
+        if (this.options.status.value !== 'none') {
+            var tips = this.getTips(this.tipregex);
+            var fun = this.getTips(this.tipregexFun);
+            var all = $.extend({}, tips, fun);
+            if (Object.keys(all).length > 0) {
+                this.attachTipStatuses(all);
+                this.attachReceiverStatus(this.getTips(/(?:)/));
+            }
+        }
+
+        if (RESUtils.currentSubreddit() === 'bitcointip') {
+            this.injectBotStatus();
+        }
+    },
+    
     /** Specifies how to find tips. */
     tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
     tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
@@ -487,48 +531,6 @@ modules['bitcoinTip'] = {
         };
     }
 
-    go: function() {        
-        if (!this.isEnabled() || !this.isMatchURL()) {
-            return;
-        }
-
-        this.addjQueryUtilities();
-
-        if (this.options.status.value === 'basic') {
-            this.icons.pending = this.icons.completed;
-            this.icons.reversed = this.icons.completed;
-        }
-
-        if (this.options.attachButtons.value) {
-            this.attachTipButtons();
-        }
-
-        if (this.options.subreddit.value) {
-            this.attachSubredditIndicator();
-        }
-
-        if (this.options.hide.value) {
-            this.hideVerifications();
-        }
-
-        if (this.options.balance.value) {
-            this.attachBalance();
-        }
-
-        if (this.options.status.value !== 'none') {
-            var tips = this.getTips(this.tipregex);
-            var fun = this.getTips(this.tipregexFun);
-            var all = $.extend({}, tips, fun);
-            if (Object.keys(all).length > 0) {
-                this.attachTipStatuses(all);
-                this.attachReceiverStatus(this.getTips(/(?:)/));
-            }
-        }
-
-        if (RESUtils.currentSubreddit() === 'bitcointip') {
-            this.injectBotStatus();
-        }
-    },
     toggleTipMenu: function(ele) {
         var tipMenu = modules['bitcoinTip'].tipMenu;
         var thisXY = $(ele).offset();
