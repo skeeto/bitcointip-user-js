@@ -271,6 +271,30 @@ modules['bitcoinTip'] = {
         this.save();
     },
 
+    getAddress: function getAddress(user) {
+        user = user || RESUtils.loggedInUser();
+        var address = null;
+        this.options.address.value.forEach(function(row) {
+            if (row[0] === user) address = row[1];
+        });
+        return address;
+    },
+
+    setAddress: function setAddress(user, address) {
+        user = user || RESUtils.loggedInUser();
+        var set = false;
+        this.options.address.value.forEach(function(row) {
+            if (row[0] === user) {
+                row[1] = address;
+                set = true;
+            }
+        });
+        if (user && !set) {
+            this.options.address.value.push([user, address]);
+        }
+        this.save();
+        return address;
+    },
 
     go: function() {
         if ((this.isEnabled()) && (this.isMatchURL())) {
