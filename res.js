@@ -84,8 +84,12 @@ var RESUtils = {
             range.moveStart('character', pos);
             range.select();
         }
-    
+
         return form;
+    },
+    isCommentPermalink: function() {
+        var path = document.location.pathname;
+        return /comments\/[a-z0-9]+\/[^/]+\/[a-z0-9]+$/.test(path);
     }
 };
 

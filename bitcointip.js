@@ -276,24 +276,26 @@ modules['bitcoinTip'] = {
                 .append(modules['bitcoinTip'].tipButton.clone(true)));
         });
 
-        if (!module.attachedPostTipButton && $('.link').length === 1) { // Viewing a submission?
+        /* Viewing a submission? */
+        if (!module.attachedPostTipButton && $('.link').length === 1
+            && !RESUtils.isCommentPermalink()) {
             $('.link ul.buttons .share').after($('<li/>')
                 .append(modules['bitcoinTip'].tipButton.clone(true)));
             module.attachedPostTipButton = true;
         }
-     
+
     },
 
     attachTipMenu: function() {
-        this.tipMenu = 
+        this.tipMenu =
             $('<div id="tip-menu" class="drop-choices">' +
                 '<a class="choice tip-publicly" href="javascript:void(0);">tip publicly</a>' +
                 '<a class="choice tip-privately" href="javascript:void(0);">tip privately</a>' +
                '</div>');
-        
+
         if (modules['settingsNavigation']) { // affordance for userscript mode
             this.tipMenu.append(
-                modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null, 
+                modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null,
                 '<img src="' + this.icons.tipped + '"> bitcointip', 'choice')
             );
         }
