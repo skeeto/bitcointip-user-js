@@ -289,9 +289,14 @@ modules['bitcoinTip'] = {
             $('<div id="tip-menu" class="drop-choices">' +
                 '<a class="choice tip-publicly" href="javascript:void(0);">tip publicly</a>' +
                 '<a class="choice tip-privately" href="javascript:void(0);">tip privately</a>' +
-                modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null, 
-                    '<img src="' + this.icons.tipped + '"> bitcointip', 'choice') +
                '</div>');
+        
+        if (modules['settingsNavigation']) { // affordance for userscript mode
+            this.tipMenu.append(
+                modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null, 
+                '<img src="' + this.icons.tipped + '"> bitcointip', 'choice')
+            );
+        }
          $(document.body).append(this.tipMenu);
 
         this.tipMenu.find('a').click(function(event) {
