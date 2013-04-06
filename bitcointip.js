@@ -117,32 +117,35 @@ modules['bitcoinTip'] = {
             this.icons.reversed = this.icons.completed;
         }
 
-        if (this.options.attachButtons.value) {
-            this.attachTipButtons();
-            RESUtils.watchForElement('newComments', modules['bitcoinTip'].attachTipButtons.bind(this));
-            this.attachTipMenu();
-        }
-
         if (this.options.subreddit.value) {
             this.attachSubredditIndicator();
-        }
-
-        if (this.options.hide.value) {
-            this.hideVerifications();
-            RESUtils.watchForElement('newComments', modules['bitcoinTip'].hideVerifications.bind(this));
         }
 
         if (this.options.balance.value) {
             this.attachBalance();
         }
 
-        if (this.options.status.value !== 'none') {
-            this.scanForTips();
-            RESUtils.watchForElement('newComments', this.scanForTips.bind(this));
-        }
-
         if (RESUtils.currentSubreddit() === 'bitcointip') {
             this.injectBotStatus();
+        }
+
+        if (RESUtils.pageType() == 'comments') {
+            if (this.options.attachButtons.value) {
+                this.attachTipButtons();
+                RESUtils.watchForElement('newComments', modules['bitcoinTip'].attachTipButtons.bind(this));
+                this.attachTipMenu();
+            }
+
+            if (this.options.hide.value) {
+                this.hideVerifications();
+                RESUtils.watchForElement('newComments', modules['bitcoinTip'].hideVerifications.bind(this));
+            }
+
+
+            if (this.options.status.value !== 'none') {
+                this.scanForTips();
+                RESUtils.watchForElement('newComments', this.scanForTips.bind(this));
+            }
         }
     },
 
@@ -265,20 +268,20 @@ modules['bitcoinTip'] = {
             });
         }
 
-        if (/^\/r\//.test(document.location.pathname)) {
-            /* Add the "tip bitcoins" button after "give gold". */
-            var allGiveGoldLinks = ele.querySelectorAll('a.give-gold');
-            RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
-                $(giveGold).parent().after($('<li/>')
-                    .append(modules['bitcoinTip'].tipButton.clone(true)));
-            });
+    
+        /* Add the "tip bitcoins" button after "give gold". */
+        var allGiveGoldLinks = ele.querySelectorAll('a.give-gold');
+        RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
+            $(giveGold).parent().after($('<li/>')
+                .append(modules['bitcoinTip'].tipButton.clone(true)));
+        });
 
-                $('.link ul.buttons').append($('<li/>')
-                    .append(modules['bitcoinTip'].tipButton.clone(true)));
-                module.attachedPostTipButton = true;
-            }
-         }
         if (!module.attachedPostTipButton && $('.link').length === 1) { // Viewing a submission?
+            $('.link ul.buttons .share').after($('<li/>')
+                .append(modules['bitcoinTip'].tipButton.clone(true)));
+            module.attachedPostTipButton = true;
+        }
+     
     },
 
     attachTipMenu: function() {
