@@ -43,6 +43,33 @@ var RESUtils = {
     notification: function(msg) {
         alert(msg);
     },
+    commentsRegex: /https?:\/\/([a-z]+).reddit.com\/[-\w\.\/]*comments\/[-\w\.\/]*/i,
+    friendsCommentsRegex: /https?:\/\/([a-z]+).reddit.com\/r\/friends\/*comments\/?/i,
+    inboxRegex: /https?:\/\/([a-z]+).reddit.com\/message\/[-\w\.\/]*/i,
+    profileRegex: /https?:\/\/([a-z]+).reddit.com\/user\/[-\w\.#=]*\/?(comments)?\/?(\?([a-z]+=[a-zA-Z0-9_%]*&?)*)?$/i, // fix to regex contributed by s_quark
+    submitRegex: /https?:\/\/([a-z]+).reddit.com\/([-\w\.\/]*\/)?submit\/?$/i,
+    prefsRegex: /https?:\/\/([a-z]+).reddit.com\/prefs\/?/i,
+    pageType: function() {
+        if (typeof(this.pageTypeSaved) == 'undefined') {
+            var pageType = '';
+            var currURL = location.href.split('#')[0];
+            if (RESUtils.profileRegex.test(currURL)) {
+                pageType = 'profile';
+            } else if ((RESUtils.commentsRegex.test(currURL)) || (RESUtils.friendsCommentsRegex.test(currURL))) {
+                pageType = 'comments';
+            } else if (RESUtils.inboxRegex.test(currURL)) {
+                pageType = 'inbox';
+            } else if (RESUtils.submitRegex.test(currURL)) {
+                pageType = 'submit';
+            } else if (RESUtils.prefsRegex.test(currURL)) {
+                pageType = 'prefs';
+            } else {
+                pageType = 'linklist';
+            }
+            this.pageTypeSaved = pageType;
+        }
+        return this.pageTypeSaved;
+    },
     watchForElement: function() { /* stub */ },
     setCursorPosition: function(form, pos) {
         elem = $(form)[0];
