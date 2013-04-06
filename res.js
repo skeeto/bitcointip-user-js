@@ -49,6 +49,7 @@ var RESUtils = {
     profileRegex: /https?:\/\/([a-z]+).reddit.com\/user\/[-\w\.#=]*\/?(comments)?\/?(\?([a-z]+=[a-zA-Z0-9_%]*&?)*)?$/i, // fix to regex contributed by s_quark
     submitRegex: /https?:\/\/([a-z]+).reddit.com\/([-\w\.\/]*\/)?submit\/?$/i,
     prefsRegex: /https?:\/\/([a-z]+).reddit.com\/prefs\/?/i,
+    commentPermalinkRegex: /comments\/[a-z0-9]+\/[^/]+\/[a-z0-9]+$/,
     pageType: function() {
         if (typeof(this.pageTypeSaved) == 'undefined') {
             var pageType = '';
@@ -87,9 +88,9 @@ var RESUtils = {
 
         return form;
     },
-    isCommentPermalink: function() {
+    isCommentPermalinkPage: function() {
         var path = document.location.pathname;
-        return /comments\/[a-z0-9]+\/[^/]+\/[a-z0-9]+$/.test(path);
+        return RESUtils.commentPermalinkRegex.test(path);
     }
 };
 

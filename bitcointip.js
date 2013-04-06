@@ -278,7 +278,7 @@ modules['bitcoinTip'] = {
 
         /* Viewing a submission? */
         if (!module.attachedPostTipButton && $('.link').length === 1
-            && !RESUtils.isCommentPermalink()) {
+            && !RESUtils.isCommentPermalinkPage()) {
             $('.link ul.buttons .share').after($('<li/>')
                 .append(modules['bitcoinTip'].tipButton.clone(true)));
             module.attachedPostTipButton = true;
