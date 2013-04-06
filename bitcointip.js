@@ -276,12 +276,14 @@ modules['bitcoinTip'] = {
                 .append(modules['bitcoinTip'].tipButton.clone(true)));
         });
 
-        /* Viewing a submission? */
-        if (!module.attachedPostTipButton && $('.link').length === 1
-            && !RESUtils.isCommentPermalinkPage()) {
-            $('.link ul.buttons .share').after($('<li/>')
-                .append(modules['bitcoinTip'].tipButton.clone(true)));
-            module.attachedPostTipButton = true;
+        if (!module.attachedPostTipButton) {
+            module.attachedPostTipButton = true; // signifies either "attached button" or "decided not to attach button"
+         
+            if (!RESUtils.isCommentPermalinkPage() && $('.link').length === 1) { 
+                // Viewing full comments on a submission, so user can comment on post
+                $('.link ul.buttons .share').after($('<li/>')
+                    .append(modules['bitcoinTip'].tipButton.clone(true)));
+            }
         }
 
     },
