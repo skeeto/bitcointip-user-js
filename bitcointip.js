@@ -170,10 +170,10 @@ modules['bitcoinTip'] = {
 
     /** Bitcointip API endpoints. */
     api: {
-        gettips: 'https://bitcointip.net/api/gettips.php',
-        gettipped: 'https://bitcointip.net/api/gettipped.php',
-        subreddits: 'https://bitcointip.net/api/subreddits.php',
-        balance: 'https://bitcointip.net/api/balance.php'
+        gettips: 'http://bitcointip.net/api/gettips.php',
+        gettipped: 'http://bitcointip.net/api/gettipped.php',
+        subreddits: 'http://bitcointip.net/api/subreddits.php',
+        balance: 'http://bitcointip.net/api/balance.php'
     },
 
     /** Encoded tipping icons. */
