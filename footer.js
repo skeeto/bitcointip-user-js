@@ -85,7 +85,7 @@ if (location.pathname === '/r/bitcointip/wiki/preferences') {
             }
         }
         bitcoinTip.save();
-        //window.location.reload(true); // Just to provide feedback
+        window.location.reload(true); // Just to provide feedback
     });
 
     $wiki.empty().append($form);
