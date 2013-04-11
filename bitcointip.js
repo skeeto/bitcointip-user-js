@@ -342,7 +342,7 @@ modules['bitcoinTip'] = {
 
     attachSubredditIndicator: function() {
         var subreddit = RESUtils.currentSubreddit();
-        if (subreddit) {
+        if (subreddit && this.getAddress(RESUtils.loggedInUser())) {
             $.getJSON(this.api.subreddits, function(data) {
                 if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
                     $('#header-bottom-right form.logout')
