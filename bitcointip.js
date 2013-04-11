@@ -1,4 +1,3 @@
-
 modules['bitcoinTip'] = {
     moduleID: 'bitcoinTip',
     moduleName: 'bitcoinTip',
@@ -107,7 +106,7 @@ modules['bitcoinTip'] = {
         RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
     },
 
-    go: function() {        
+    go: function() {
         if (!this.isEnabled() || !this.isMatchURL()) {
             return;
         }
@@ -253,7 +252,7 @@ modules['bitcoinTip'] = {
         window.location = url;
     },
 
-    attachTipButtons: function attachTipButtons(ele) {      
+    attachTipButtons: function attachTipButtons(ele) {
         ele = ele || document.body;
         var module = this;
         if (!module.tipButton) {
@@ -268,7 +267,7 @@ modules['bitcoinTip'] = {
             });
         }
 
-    
+
         /* Add the "tip bitcoins" button after "give gold". */
         var allGiveGoldLinks = ele.querySelectorAll('a.give-gold');
         RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
@@ -278,8 +277,8 @@ modules['bitcoinTip'] = {
 
         if (!module.attachedPostTipButton) {
             module.attachedPostTipButton = true; // signifies either "attached button" or "decided not to attach button"
-         
-            if (!RESUtils.isCommentPermalinkPage() && $('.link').length === 1) { 
+
+            if (!RESUtils.isCommentPermalinkPage() && $('.link').length === 1) {
                 // Viewing full comments on a submission, so user can comment on post
                 $('.link ul.buttons .share').after($('<li/>')
                     .append(modules['bitcoinTip'].tipButton.clone(true)));
@@ -372,7 +371,7 @@ modules['bitcoinTip'] = {
 
             var hasReplies = $this.find('.comment').length > 0;
             if (hasReplies) return;
-               
+
             $this.find('.expand').eq(2).click();
         });
     },
@@ -440,7 +439,7 @@ modules['bitcoinTip'] = {
             RESUtils.notification('Log in, then try again.');
             return;
         }
-        this.fetchAddress(user, function(address) { 
+        this.fetchAddress(user, function(address) {
             if (address) {
                 modules['bitcoinTip'].setAddress(user, address);
                 RESUtils.notification(
