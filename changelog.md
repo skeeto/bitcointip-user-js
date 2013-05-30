@@ -1,4 +1,7 @@
- * 2.0
+ * 2.0.1
+   * Support for new +/u/bitcointip keyword
+   * Small fixes
+ * 2.0.0
    * Refactor the entire script for RES
  * 1.5.2
    * Bug fix
