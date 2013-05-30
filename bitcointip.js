@@ -163,7 +163,7 @@ modules['bitcoinTip'] = {
 
     /** Specifies how to find tips. */
     tipregex: /\+(bitcointip|bitcoin|tip|btctip|bittip|btc)/i,
-    tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/,
+    tipregexFun: /(\+((?!0)(\d{1,4})) (point|internet|upcoin))/i,
 
     /** How many milliseconds until the bot is considered down. */
     botDownThreshold: 15 * 60 * 1000,
