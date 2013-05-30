@@ -494,6 +494,15 @@ modules['bitcoinTip'] = {
         }
     },
 
+    /** Return true if the comment node matches the regex. */
+    commentMatches: function(regex, $e) {
+        unsafeWindow.foo = unsafeWindow.foo || [];
+        unsafeWindow.foo.push($e);
+        return $e.find('.md:first, .title:first').children().is(function() {
+            return regex.test($(this).text());
+        });
+    },
+
     /** Find all things matching a regex. */
     getTips: function getComments(regex, ele) {
         var tips = {};
@@ -503,13 +512,10 @@ modules['bitcoinTip'] = {
         } else {
             items = items.find('div.comment, div.self, div.link');
         }
+        var module = this;
         items.each(function() {
             var $this = $(this);
-            var match = $this.find('.md:first, .title:first')
-                    .children().is(function() {
-                        return regex.test($(this).text());
-                    });
-            if (match) {
+            if (module.commentMatches(regex, $this)) {
                 var id = $this.attr('data-fullname');
                 tips[id.replace(/^t._/, '')] = $this;
             }
@@ -541,6 +547,9 @@ modules['bitcoinTip'] = {
 
             /* Deal with unanswered tips. */
             for (var id in tips) {
+                if (this.commentMatches(this.tipregexFun, tips[id])) {
+                    continue; // probably wasn't actually a tip
+                }
                 var date = tips[id].find('.tagline time:first')
                         .attr('datetime');
                 if (new Date(date) < lastEvaluated) {
