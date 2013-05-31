@@ -226,7 +226,7 @@ modules['bitcoinTip'] = {
         }
         var textarea = form.find('textarea');
         if (!textarea.val().match(this.tipregex)) {
-            textarea.val(textarea.val() + '\n\n+bitcointip ' +
+            textarea.val(textarea.val() + '\n\n+/u/bitcointip ' +
                          this.options.baseTip.value);
             RESUtils.setCursorPosition(textarea, 0);
         }
@@ -246,7 +246,7 @@ modules['bitcoinTip'] = {
             }
         }
         var user = $target.closest('.thing').find('.author:first').text();
-        var msg = encodeURIComponent('+bitcointip @' + user + ' ' +
+        var msg = encodeURIComponent('+/u/bitcointip @' + user + ' ' +
                                          this.options.baseTip.value);
         var url = '/message/compose?to=bitcointip&subject=Tip&message=' + msg;
         window.location = url;
