@@ -1,4 +1,4 @@
- * 2.0.1
+ * 2.0.2
    * Support for new +/u/bitcointip keyword
    * Small fixes
  * 2.0.0
