@@ -62,7 +62,7 @@ modules['bitcointip'] = {
         subreddit: {
             name: 'Display Enabled Subreddits',
             type: 'boolean',
-            value: true,
+            value: false,
             description: 'Display enabled subreddits'
         },
         address: {
