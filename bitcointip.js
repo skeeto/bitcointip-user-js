@@ -1,7 +1,8 @@
-modules['bitcoinTip'] = {
-    moduleID: 'bitcoinTip',
-    moduleName: 'bitcoinTip',
+modules['bitcointip'] = {
+    moduleID: 'bitcointip',
+    moduleName: 'bitcointip',
     category: 'Users',
+    disabledByDefault: true,
     description: 'Send <a href="http://bitcoin.org/" target="_blank">' +
         'bitcoin</a> to other redditors  via <a href="/r/bitcointip" ' +
         'target="_blank">bitcointip</a>. <br><br>' +
@@ -100,10 +101,11 @@ modules['bitcoinTip'] = {
     },
     beforeLoad: function() {
         this.options.fetchWalletAddress.callback = this.fetchAddressForCurrentUser.bind(this);
-
         RESUtils.addCSS('.tip-bitcoins { cursor: pointer; }');
         RESUtils.addCSS('.tips-enabled-icon { cursor: help; }');
         RESUtils.addCSS('#tip-menu { display: none; position: absolute; top: 0; left: 0; }');
+        // fix weird z-indexing issue caused by reddit's default .dropdown class
+            RESUtils.addCSS('.tip-wrapper .dropdown { position: static; }');
     },
 
     go: function() {
@@ -128,16 +130,16 @@ modules['bitcoinTip'] = {
             this.injectBotStatus();
         }
 
-        if (RESUtils.pageType() == 'comments') {
+        if (RESUtils.pageType() === 'comments') {
             if (this.options.attachButtons.value) {
                 this.attachTipButtons();
-                RESUtils.watchForElement('newComments', modules['bitcoinTip'].attachTipButtons.bind(this));
+                RESUtils.watchForElement('newComments', modules['bitcointip'].attachTipButtons.bind(this));
                 this.attachTipMenu();
             }
 
             if (this.options.hide.value) {
                 this.hideVerifications();
-                RESUtils.watchForElement('newComments', modules['bitcoinTip'].hideVerifications.bind(this));
+                RESUtils.watchForElement('newComments', modules['bitcointip'].hideVerifications.bind(this));
             }
 
 
@@ -221,7 +223,8 @@ modules['bitcoinTip'] = {
         if ($target.closest('.link').length > 0) { /* Post */
             form = $('.commentarea .usertext:first');
         } else { /* Comment */
-            $target.closest('ul').find('a[onclick*="reply"]').click();
+            var replyButton = $target.closest('ul').find('a[onclick*="reply"]');
+            RESUtils.click(replyButton[0]);
             form = $target.closest('.thing').find('FORM.usertext.cloneable:first');
         }
         var textarea = form.find('textarea');
@@ -259,11 +262,11 @@ modules['bitcoinTip'] = {
             module.tipButton = $(
                 '<span class="tip-wrapper">' +
                   '<div class="dropdown">' +
-                    '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">tip</a>' +
+                    '<a class="tip-bitcoins login-required" title="Click to give a bitcoin tip">bitcointip</a>' +
                   '</div>' +
                 '</span>');
             module.tipButton.bind('click', function(e) {
-                modules['bitcoinTip'].toggleTipMenu(e.target);
+                modules['bitcointip'].toggleTipMenu(e.target);
             });
         }
 
@@ -272,7 +275,7 @@ modules['bitcoinTip'] = {
         var allGiveGoldLinks = ele.querySelectorAll('a.give-gold');
         RESUtils.forEachChunked(allGiveGoldLinks, 15, 1000, function(giveGold, i, array) {
             $(giveGold).parent().after($('<li/>')
-                .append(modules['bitcoinTip'].tipButton.clone(true)));
+                .append(modules['bitcointip'].tipButton.clone(true)));
         });
 
         if (!module.attachedPostTipButton) {
@@ -281,7 +284,7 @@ modules['bitcoinTip'] = {
             if (!RESUtils.isCommentPermalinkPage() && $('.link').length === 1) {
                 // Viewing full comments on a submission, so user can comment on post
                 $('.link ul.buttons .share').after($('<li/>')
-                    .append(modules['bitcoinTip'].tipButton.clone(true)));
+                    .append(modules['bitcointip'].tipButton.clone(true)));
             }
         }
 
@@ -296,30 +299,30 @@ modules['bitcoinTip'] = {
 
         if (modules['settingsNavigation']) { // affordance for userscript mode
             this.tipMenu.append(
-                modules['settingsNavigation'].makeUrlHashLink('bitcoinTip', null,
+                modules['settingsNavigation'].makeUrlHashLink(this.moduleID, null,
                 '<img src="' + this.icons.tipped + '"> bitcointip', 'choice')
             );
         }
          $(document.body).append(this.tipMenu);
 
         this.tipMenu.find('a').click(function(event) {
-            modules['bitcoinTip'].toggleTipMenu();
+            modules['bitcointip'].toggleTipMenu();
         });
 
         this.tipMenu.find('.tip-publicly').click(function(event) {
             event.preventDefault();
-            modules['bitcoinTip'].tipPublicly($(modules['bitcoinTip'].lastToggle));
+            modules['bitcointip'].tipPublicly($(modules['bitcointip'].lastToggle));
         });
 
         this.tipMenu.find('.tip-privately').click(function(event) {
             event.preventDefault();
-            modules['bitcoinTip'].tipPrivately($(modules['bitcoinTip'].lastToggle));
+            modules['bitcointip'].tipPrivately($(modules['bitcointip'].lastToggle));
         });
     },
 
 
     toggleTipMenu: function(ele) {
-        var tipMenu = modules['bitcoinTip'].tipMenu;
+        var tipMenu = modules['bitcointip'].tipMenu;
 
         if (!ele || ele.length === 0) {
             tipMenu.hide();
@@ -329,7 +332,7 @@ modules['bitcoinTip'] = {
         var thisXY = $(ele).offset();
         var thisHeight = $(ele).height();
         // if already visible and we've clicked a different trigger, hide first, then show after the move.
-        if ((tipMenu.is(':visible')) && (modules['bitcoinTip'].lastToggle !== ele)) {
+        if ((tipMenu.is(':visible')) && (modules['bitcointip'].lastToggle !== ele)) {
             tipMenu.hide();
         }
         tipMenu.css({
@@ -337,14 +340,14 @@ modules['bitcoinTip'] = {
             left: thisXY.left+'px'
         });
         tipMenu.toggle();
-        modules['bitcoinTip'].lastToggle = ele;
+        modules['bitcointip'].lastToggle = ele;
     },
 
     attachSubredditIndicator: function() {
         var subreddit = RESUtils.currentSubreddit();
         if (subreddit && this.getAddress(RESUtils.loggedInUser())) {
             $.getJSON(this.api.subreddits, function(data) {
-                if (data.subreddits.indexOf(subreddit.toLowerCase()) >= 0) {
+                if (data.subreddits.indexOf(subreddit.toLowerCase()) !== -1) {
                     $('#header-bottom-right form.logout')
                         .before(this.separator()).prev()
                         .before($('<img/>').attr({
@@ -436,25 +439,38 @@ modules['bitcoinTip'] = {
     fetchAddressForCurrentUser: function () {
         var user = RESUtils.loggedInUser();
         if (!user) {
-            RESUtils.notification('Log in, then try again.');
+            RESUtils.notification({
+                moduleID: 'bitcointip',
+                optionKey: 'fetchWalletAddress',
+                type: 'error',
+                message: 'Log in, then try again.'
+            });
             return;
         }
         this.fetchAddress(user, function(address) {
             if (address) {
-                modules['bitcoinTip'].setAddress(user, address);
-                RESUtils.notification(
-                    'Found address ' + address + ' for user ' + user +
-                    '<br><br>Address appear RES settings after you refresh the page.'
-                    );
+                modules['bitcointip'].setAddress(user, address);
+                RESUtils.notification({
+                        moduleID: 'bitcointip',
+                        optionKey: 'address',
+                        message: 'Found address ' + address + ' for user ' + user +
+                            '<br><br>Your adress will appear in RES settings after you refresh the page.'
+                });
             } else {
-                RESUtils.notification('Could not find address for user ' + user);
+                RESUtils.notification({
+                        moduleID: 'bitcointip',
+                        type: 'error',
+                        message: 'Could not find address for user ' + user
+                    });
             }
 
         });
-        RESUtils.notification(
-            'Searching your private messages for a bitcoin wallet address. ' +
-            'Reload the page to see if a wallet was found.'
-            );
+        RESUtils.notification({
+                moduleID: 'bitcointip',
+                optionKey: 'fetchWalletAddress',
+                message: 'Searching your private messages for a bitcoin wallet address. ' +
+                        '<br><br>Reload the page to see if a wallet was found.'
+         });
     },
 
     fetchAddress: function fetchAddress(user, callback) {

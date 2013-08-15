@@ -41,7 +41,7 @@ var RESUtils = {
         window.setTimeout(doChunk, delay);
     },
     notification: function(msg) {
-        alert(msg);
+        alert(msg.message);
     },
     commentsRegex: /https?:\/\/([a-z]+).reddit.com\/[-\w\.\/]*comments\/[-\w\.\/]*/i,
     friendsCommentsRegex: /https?:\/\/([a-z]+).reddit.com\/r\/friends\/*comments\/?/i,

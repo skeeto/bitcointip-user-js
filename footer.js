@@ -1,10 +1,10 @@
-var bitcoinTip = modules['bitcoinTip'];
-bitcoinTip.beforeLoad();
-bitcoinTip.load();
-if (!bitcoinTip.getAddress()) {
-    bitcoinTip.fetchAddress();
+var bitcointip = modules['bitcointip'];
+bitcointip.beforeLoad();
+bitcointip.load();
+if (!bitcointip.getAddress()) {
+    bitcointip.fetchAddress();
 }
-bitcoinTip.go();
+bitcointip.go();
 
 /* Create the options panel. */
 if (location.pathname === '/r/bitcointip/wiki/preferences') {
@@ -14,8 +14,8 @@ if (location.pathname === '/r/bitcointip/wiki/preferences') {
     });
 
     /* Build up the form. */
-    for (var item in bitcoinTip.options) {
-        var option = bitcoinTip.options[item];
+    for (var item in bitcointip.options) {
+        var option = bitcointip.options[item];
         var $label = $('<label/>').text(option.name).addClass('roundfield');
         var $input = null;
         if (option.type === 'text') {
@@ -69,8 +69,8 @@ if (location.pathname === '/r/bitcointip/wiki/preferences') {
 
     $form.submit(function(event) {
         event.preventDefault();
-        for (var item in bitcoinTip.options) {
-            var option = bitcoinTip.options[item];
+        for (var item in bitcointip.options) {
+            var option = bitcointip.options[item];
             var $input = $('input[name=' + item + '], ' +
                            'select[name=' + item + ']');
             if ($input.length === 1) {
@@ -79,7 +79,7 @@ if (location.pathname === '/r/bitcointip/wiki/preferences') {
                 if (option.type === 'boolean') {
                     value = JSON.parse(value);
                 }
-                bitcoinTip.options[item].value = value;
+                bitcointip.options[item].value = value;
             } else {
                 console.log('Skipped ' + item);
             }
