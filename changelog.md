@@ -1,3 +1,6 @@
+ * 2.1.0
+   * Merge in changes/fixes from RES
+   * Subreddit-enabled icon off by default
  * 2.0.2
    * Support for new +/u/bitcointip keyword
    * Small fixes
