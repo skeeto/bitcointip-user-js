@@ -91,6 +91,12 @@ var RESUtils = {
     isCommentPermalinkPage: function() {
         var path = document.location.pathname;
         return RESUtils.commentPermalinkRegex.test(path);
+    },
+    click: function(obj, button) {
+        var evt = document.createEvent('MouseEvents');
+        button = button || 0;
+        evt.initMouseEvent('click', true, true, window.wrappedJSObject, 0, 1, 1, 1, 1, false, false, false, false, button, null);
+        obj.dispatchEvent(evt);
     }
 };
 
