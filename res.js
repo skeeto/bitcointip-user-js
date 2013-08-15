@@ -73,8 +73,8 @@ var RESUtils = {
     },
     watchForElement: function() { /* stub */ },
     setCursorPosition: function(form, pos) {
-        elem = $(form)[0];
-        if (!elem) return;
+        var elem = $(form)[0];
+        if (!elem) return null;
 
         if (elem.setSelectionRange) {
             elem.setSelectionRange(pos, pos);
