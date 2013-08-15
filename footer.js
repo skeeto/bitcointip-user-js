@@ -84,7 +84,7 @@ if (location.pathname === '/r/bitcointip/wiki/preferences') {
                 console.log('Skipped ' + item);
             }
         }
-        bitcoinTip.save();
+        bitcointip.save();
         window.location.reload(true); // Just to provide feedback
     });
 
