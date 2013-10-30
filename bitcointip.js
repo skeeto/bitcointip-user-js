@@ -10,13 +10,6 @@ modules['bitcointip'] = {
         'target="_blank">/r/bitcointip</a>  or <a href="/13iykn" ' +
         'target="_blank">read the documentation</a>.',
     options: {
-        baseTip: {
-            name: 'Default Tip',
-            type: 'text',
-            value: '0.01 BTC',
-            description: 'Default tip amount in the form of ' +
-                '"[value] [units]", e.g. "0.01 BTC"'
-        },
         attachButtons: {
             name: 'Add "tip bitcoins" Button',
             type: 'boolean',
@@ -218,7 +211,7 @@ modules['bitcointip'] = {
         return unit.unit + amount;
     },
 
-    tipPublicly: function tipPublicly($target) {
+    tipPublicly: function tipPublicly($target, amount) {
         var form = null;
         if ($target.closest('.link').length > 0) { /* Post */
             form = $('.commentarea .usertext:first');
@@ -229,13 +222,12 @@ modules['bitcointip'] = {
         }
         var textarea = form.find('textarea');
         if (!textarea.val().match(this.tipregex)) {
-            textarea.val(textarea.val() + '\n\n+/u/bitcointip ' +
-                         this.options.baseTip.value);
+            textarea.val(textarea.val() + '\n\n+/u/bitcointip ' + amount);
             RESUtils.setCursorPosition(textarea, 0);
         }
     },
 
-    tipPrivately: function tipPrivately($target) {
+    tipPrivately: function tipPrivately($target, amount) {
         var form = null;
         if ($target.closest('.link').length > 0) { /* Post */
             form = $('.commentarea .usertext:first');
@@ -249,8 +241,7 @@ modules['bitcointip'] = {
             }
         }
         var user = $target.closest('.thing').find('.author:first').text();
-        var msg = encodeURIComponent('+/u/bitcointip @' + user + ' ' +
-                                         this.options.baseTip.value);
+        var msg = encodeURIComponent('+/u/bitcointip @' + user + ' ' + amount);
         var url = '/message/compose?to=bitcointip&subject=Tip&message=' + msg;
         window.location = url;
     },
@@ -291,11 +282,16 @@ modules['bitcointip'] = {
     },
 
     attachTipMenu: function() {
-        this.tipMenu =
-            $('<div id="tip-menu" class="drop-choices">' +
-                '<a class="choice tip-publicly" href="javascript:void(0);">tip publicly</a>' +
-                '<a class="choice tip-privately" href="javascript:void(0);">tip privately</a>' +
-               '</div>');
+        var tipAmounts = ['$1', '$2', '$5', '$10', 'beer', 'tea', 'coffee'];
+        function toClass(name) {
+            return 'tip-' + name.replace(/[^\w\d]/g, '');
+        }
+        var items = tipAmounts.map(function(amount) {
+            return '<a class="choice ' + toClass(amount) +
+                '" href="javascript:void(0);">tip ' + amount + '</a>';
+        });
+        this.tipMenu = $('<div id="tip-menu" class="drop-choices">' +
+                         items.join('\n') + '</div>');
 
         if (modules['settingsNavigation']) { // affordance for userscript mode
             this.tipMenu.append(
@@ -303,23 +299,19 @@ modules['bitcointip'] = {
                 '<img src="' + this.icons.tipped + '"> bitcointip', 'choice')
             );
         }
-         $(document.body).append(this.tipMenu);
+        $(document.body).append(this.tipMenu);
 
-        this.tipMenu.find('a').click(function(event) {
-            modules['bitcointip'].toggleTipMenu();
+        var module = this;
+        module.tipMenu.find('a').click(function(event) {
+            module.toggleTipMenu();
         });
-
-        this.tipMenu.find('.tip-publicly').click(function(event) {
-            event.preventDefault();
-            modules['bitcointip'].tipPublicly($(modules['bitcointip'].lastToggle));
-        });
-
-        this.tipMenu.find('.tip-privately').click(function(event) {
-            event.preventDefault();
-            modules['bitcointip'].tipPrivately($(modules['bitcointip'].lastToggle));
+        tipAmounts.forEach(function(amount) {
+            module.tipMenu.find('.' + toClass(amount)).click(function(event) {
+                event.preventDefault();
+                module.tipPublicly($(module.lastToggle), amount);
+            });
         });
     },
-
 
     toggleTipMenu: function(ele) {
         var tipMenu = modules['bitcointip'].tipMenu;
